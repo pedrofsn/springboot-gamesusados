@@ -28,7 +28,7 @@ class GamesController {
         @RequestParam title: String?,
         @PageableDefault(sort = ["title"], direction = Direction.DESC, page = 0, size = 10) pageable: Pageable
     ): Page<GameDTO> = when (title != null) {
-        true -> gamesRepository.findGameByTitleLikeIgnoreCase(title.asSearchable(), pageable).map { it.toDTO() }
+        true -> gamesRepository.findGameByTitleContainsIgnoreCase(title, pageable).map { it.toDTO() }
         else -> gamesRepository.findAll(pageable).map { it.toDTO() }
     }
 
