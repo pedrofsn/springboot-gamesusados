@@ -20,6 +20,7 @@ data class GameAnnouncement(
 ) : Metadata() {
 
     fun toDTO() = GameAnnouncementDTO(
+        id = id,
         price = price,
         game = game.toDTO(),
         owner = owner.toDTO()
