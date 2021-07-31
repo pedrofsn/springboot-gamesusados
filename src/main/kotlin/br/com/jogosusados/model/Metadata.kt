@@ -17,7 +17,7 @@ abstract class Metadata {
     lateinit var createdBy: String
 
     @CreatedDate
-    val createdAt: Calendar = Calendar.getInstance()
+    var createdAt: Calendar = Calendar.getInstance()
 
     @LastModifiedBy
     var updatedBy: String? = null
