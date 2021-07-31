@@ -10,10 +10,15 @@ import org.springframework.web.context.request.WebRequest
 @RestControllerAdvice
 class ControllerAdvice {
 
-    @ExceptionHandler(NotFoundException::class)
+    @ExceptionHandler(
+        CustomNotFoundException::class,
+        GameAnnouncementNotFoundException::class,
+        GameNotFoundException::class,
+        PlatformNotFoundException::class,
+    )
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleAccessDeniedException(ex: Exception?, request: WebRequest?) = ResponseEntity
         .status(HttpStatus.NOT_FOUND)
-        .body(ex?.toDTO<NotFoundException>())
+        .body(ex?.toDTO<CustomNotFoundException>())
 
 }

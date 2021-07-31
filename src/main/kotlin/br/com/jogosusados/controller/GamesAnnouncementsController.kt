@@ -1,6 +1,7 @@
 package br.com.jogosusados.controller
 
-import br.com.jogosusados.error.NotFoundException
+import br.com.jogosusados.error.GameAnnouncementNotFoundException
+import br.com.jogosusados.error.GameNotFoundException
 import br.com.jogosusados.extensions.getUser
 import br.com.jogosusados.extensions.toResponseEntity
 import br.com.jogosusados.model.GameAnnouncement
@@ -37,14 +38,14 @@ class GamesAnnouncementsController {
             val game = gamesAnnouncementsRepository.findById(id).get().toDTO()
             return ResponseEntity.ok(game)
         } catch (exception : NoSuchElementException) {
-            throw NotFoundException()
+            throw GameAnnouncementNotFoundException()
         }
     }
 
     @GetMapping("game/{idGame}")
     fun getList(@PathVariable idGame: Long): ResponseEntity<GameWithAnnouncementDTO> {
         val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByGameId(idGame)
-        val gameDTO = announcements.firstOrNull()?.game?.toDTO() ?: throw NotFoundException()
+        val gameDTO = announcements.firstOrNull()?.game?.toDTO() ?: throw GameAnnouncementNotFoundException()
         val announcementsDTO = announcements.map { it.toAnnouncementDTO() }
         val response = GameWithAnnouncementDTO(game = gameDTO, announcements = announcementsDTO)
         return ResponseEntity.ok(response)
@@ -65,7 +66,7 @@ class GamesAnnouncementsController {
             val saved = gamesAnnouncementsRepository.save(gameAnnouncent)
 
             return uriBuilder.toResponseEntity(saved.id, gameAnnouncent.toDTO())
-        } ?: throw NotFoundException()
+        } ?: throw GameNotFoundException()
     }
 
 }

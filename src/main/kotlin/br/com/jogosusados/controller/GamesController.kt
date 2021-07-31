@@ -1,6 +1,7 @@
 package br.com.jogosusados.controller
 
-import br.com.jogosusados.error.NotFoundException
+import br.com.jogosusados.error.GameNotFoundException
+import br.com.jogosusados.error.PlatformNotFoundException
 import br.com.jogosusados.extensions.toResponseEntity
 import br.com.jogosusados.model.Game
 import br.com.jogosusados.payload.GameDTO
@@ -15,9 +16,13 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
-import java.util.*
 
 @RestController
 @RequestMapping("games")
@@ -30,9 +35,9 @@ class GamesController {
     lateinit var platformRepository: GamePlatformRepository
 
     @GetMapping("/{id}")
-    fun getDetail(@PathVariable id: Long): Optional<GameDTO> {
-        val game = gamesRepository.findById(id).get().toDTO()
-        return Optional.ofNullable(game)
+    fun getDetail(@PathVariable id: Long): ResponseEntity<GameDTO> {
+        val entity = gamesRepository.findByIdOrNull(id)?.toDTO() ?: throw GameNotFoundException()
+        return ResponseEntity.ok(entity)
     }
 
     @GetMapping
@@ -57,7 +62,7 @@ class GamesController {
             val saved = gamesRepository.save(entity)
 
             return uriBuilder.toResponseEntity(saved.id, entity.toDTO())
-        } ?: throw NotFoundException()
+        } ?: throw PlatformNotFoundException()
     }
 
 }
