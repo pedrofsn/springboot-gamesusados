@@ -15,7 +15,11 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 
@@ -37,7 +41,7 @@ class GamesAnnouncementsController {
         try {
             val game = gamesAnnouncementsRepository.findById(id).get().toDTO()
             return ResponseEntity.ok(game)
-        } catch (exception : NoSuchElementException) {
+        } catch (exception: NoSuchElementException) {
             throw GameAnnouncementNotFoundException()
         }
     }
@@ -58,15 +62,11 @@ class GamesAnnouncementsController {
         @PathVariable price: Double,
         uriBuilder: UriComponentsBuilder
     ): ResponseEntity<GameAnnouncementDTO> {
-        return gameRepository.findByIdOrNull(idGame)?.let { game ->
-
-            val user = usersRepository.getUser(userDetails)
-
-            val gameAnnouncent = GameAnnouncement(price = price, owner = user, game = game, id = 0)
-            val saved = gamesAnnouncementsRepository.save(gameAnnouncent)
-
-            return uriBuilder.toResponseEntity(saved.id, gameAnnouncent.toDTO())
-        } ?: throw GameNotFoundException()
+        val game = gameRepository.findByIdOrNull(idGame) ?: throw GameNotFoundException()
+        val user = usersRepository.getUser(userDetails)
+        val gameAnnouncent = GameAnnouncement(price = price, owner = user, game = game, id = 0)
+        val saved = gamesAnnouncementsRepository.save(gameAnnouncent)
+        return uriBuilder.toResponseEntity(saved.id, gameAnnouncent.toDTO())
     }
 
 }
