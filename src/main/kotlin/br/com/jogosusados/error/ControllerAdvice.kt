@@ -17,8 +17,14 @@ class ControllerAdvice {
         PlatformNotFoundException::class,
     )
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleAccessDeniedException(ex: Exception?, request: WebRequest?) = ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
+    fun handleNotFound(ex: Exception?, request: WebRequest?) = HttpStatus.NOT_FOUND.toResponse(ex)
+
+    @ExceptionHandler(LoginException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleAccessDenied(ex: Exception?, request: WebRequest?) = HttpStatus.UNAUTHORIZED.toResponse(ex)
+
+    private fun HttpStatus.toResponse(ex: Exception?) = ResponseEntity
+        .status(this)
         .body(ex?.toDTO<CustomNotFoundException>())
 
 }
