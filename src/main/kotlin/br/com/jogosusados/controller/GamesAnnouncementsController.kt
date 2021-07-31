@@ -1,5 +1,6 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.error.NotFoundException
 import br.com.jogosusados.extensions.getUser
 import br.com.jogosusados.extensions.toResponseEntity
 import br.com.jogosusados.model.GameAnnouncement
@@ -15,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
-import java.util.*
+
 
 @RestController
 @RequestMapping("announcements")
@@ -31,18 +32,22 @@ class GamesAnnouncementsController {
     lateinit var usersRepository: UserRepository
 
     @GetMapping("/{id}")
-    fun getDetail(@PathVariable id: Long): Optional<GameAnnouncementDTO> {
-        val game = gamesAnnouncementsRepository.findById(id).get().toDTO()
-        return Optional.ofNullable(game)
+    fun getDetail(@PathVariable id: Long): ResponseEntity<GameAnnouncementDTO> {
+        try {
+            val game = gamesAnnouncementsRepository.findById(id).get().toDTO()
+            return ResponseEntity.ok(game)
+        } catch (exception : NoSuchElementException) {
+            throw NotFoundException()
+        }
     }
 
     @GetMapping("game/{idGame}")
-    fun getList(@PathVariable idGame: Long): Optional<GameWithAnnouncementDTO> {
+    fun getList(@PathVariable idGame: Long): ResponseEntity<GameWithAnnouncementDTO> {
         val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByGameId(idGame)
-        val gameDTO = announcements.first().game.toDTO()
+        val gameDTO = announcements.firstOrNull()?.game?.toDTO() ?: throw NotFoundException()
         val announcementsDTO = announcements.map { it.toAnnouncementDTO() }
         val response = GameWithAnnouncementDTO(game = gameDTO, announcements = announcementsDTO)
-        return Optional.ofNullable(response)
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping("game/{idGame}/price/{price}")
@@ -60,7 +65,7 @@ class GamesAnnouncementsController {
             val saved = gamesAnnouncementsRepository.save(gameAnnouncent)
 
             return uriBuilder.toResponseEntity(saved.id, gameAnnouncent.toDTO())
-        } ?: ResponseEntity.notFound().build()
+        } ?: throw NotFoundException()
     }
 
 }
