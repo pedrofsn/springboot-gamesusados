@@ -1,6 +1,6 @@
 package br.com.jogosusados.audit
 
-import br.com.jogosusados.model.User
+import br.com.jogosusados.model.user.User
 import org.springframework.data.domain.AuditorAware
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.*

@@ -1,6 +1,6 @@
 package br.com.jogosusados.controller
 
-import br.com.jogosusados.model.User
+import br.com.jogosusados.model.user.User
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails

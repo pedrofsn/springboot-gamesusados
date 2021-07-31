@@ -1,5 +1,6 @@
 package br.com.jogosusados.model
 
+import br.com.jogosusados.model.user.User
 import br.com.jogosusados.payload.AnnouncementDTO
 import br.com.jogosusados.payload.GameAnnouncementDTO
 import javax.persistence.*

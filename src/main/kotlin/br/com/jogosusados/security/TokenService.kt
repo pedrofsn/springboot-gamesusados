@@ -1,7 +1,7 @@
 package br.com.jogosusados.security
 
 
-import br.com.jogosusados.model.User
+import br.com.jogosusados.model.user.User
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value

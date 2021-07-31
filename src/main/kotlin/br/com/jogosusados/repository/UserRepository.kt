@@ -1,6 +1,6 @@
 package br.com.jogosusados.repository
 
-import br.com.jogosusados.model.User
+import br.com.jogosusados.model.user.User
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.Optional
 
