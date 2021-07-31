@@ -1,4 +1,4 @@
-package br.com.jogosusados.extensions
+package br.com.jogosusados.controller
 
 import br.com.jogosusados.model.User
 import br.com.jogosusados.repository.UserRepository

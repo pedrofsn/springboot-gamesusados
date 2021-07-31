@@ -2,7 +2,6 @@ package br.com.jogosusados.controller
 
 import br.com.jogosusados.error.GameNotFoundException
 import br.com.jogosusados.error.PlatformNotFoundException
-import br.com.jogosusados.extensions.toResponseEntity
 import br.com.jogosusados.model.Game
 import br.com.jogosusados.payload.GameDTO
 import br.com.jogosusados.repository.GamePlatformRepository

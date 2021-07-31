@@ -2,8 +2,6 @@ package br.com.jogosusados.controller
 
 import br.com.jogosusados.error.GameAnnouncementNotFoundException
 import br.com.jogosusados.error.GameNotFoundException
-import br.com.jogosusados.extensions.getUser
-import br.com.jogosusados.extensions.toResponseEntity
 import br.com.jogosusados.model.GameAnnouncement
 import br.com.jogosusados.payload.GameAnnouncementDTO
 import br.com.jogosusados.payload.GameWithAnnouncementDTO
