@@ -1,7 +1,7 @@
 package br.com.jogosusados.payload
 
-import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.model.user.User
+import br.com.jogosusados.model.user.UserType
 
 data class UserPOST(
     val name: String,
@@ -9,12 +9,12 @@ data class UserPOST(
     val email: String,
     val password: String
 ) {
-    fun toEntity() = User(
+    fun toEntity(type: UserType) = User(
         id = 0,
         name = name,
         phone = phone,
         email = email,
         password = password,
-        type = Regular
+        type = type
     )
 }

@@ -1,7 +1,16 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.model.user.Regular
+import br.com.jogosusados.payload.LoggedDTO
+import br.com.jogosusados.payload.UserPOST
 import br.com.jogosusados.repository.UserRepository
+import br.com.jogosusados.security.TokenService
+import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -11,18 +20,19 @@ class UsersController {
 
     @Autowired
     lateinit var usersRepository: UserRepository
-/*
-    @GetMapping
-    fun registerUser(@RequestBody @Valid form: UserPOST) : ResponseEntity<ResponseUserRegistered> {
-        usersRepository.save(form.toEntity())
 
-        val email = userDetails.username
-        val user = usersRepository.findByEmail(email).get()
-        return form.converter(cursoRepository, user)?.let { topico ->
-            val newTopico = topicoRepository.save(topico)
-            val uri: URI = uriBuilder.path("/topicos/{id}").buildAndExpand(newTopico.id).toUri()
-            ResponseEntity.created(uri).body(TopicoDto.converter(newTopico))
-        } ?: ResponseEntity.notFound().build();
+    @Autowired
+    lateinit var authManager: AuthenticationManager
+
+    @Autowired
+    lateinit var tokenService: TokenService
+
+    @GetMapping
+    fun registerUser(@RequestBody @Valid form: UserPOST): ResponseEntity<LoggedDTO> {
+        return usersRepository.save(form.toEntity(Regular)).toLogin()
+            .let { authManager.authenticate(it) }
+            .let { tokenService.createToken(it) }
+            .let { ResponseEntity.ok(LoggedDTO(it)) }
     }
-*/
+
 }
