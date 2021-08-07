@@ -13,4 +13,3 @@ sealed class UserType(val typeName: String) : GrantedAuthority {
         }
     }
 }
-
