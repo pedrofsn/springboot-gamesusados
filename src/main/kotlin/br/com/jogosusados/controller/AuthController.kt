@@ -25,11 +25,11 @@ class AuthController {
     lateinit var tokenService: TokenService
 
     @PostMapping
-    fun login(@RequestBody form: @Valid LoginPOST?) = try {
-        val formLogin = form?.converter()
-        val authentication = authManager.authenticate(formLogin)
+    fun login(@RequestBody form: @Valid LoginPOST?): ResponseEntity<LoggedDTO> = try {
+        val login = form?.converter()
+        val authentication = authManager.authenticate(login)
         val token: String = tokenService.createToken(authentication)
-        ResponseEntity.ok<LoggedDTO?>(LoggedDTO(token))
+        ResponseEntity.ok(LoggedDTO(token))
     } catch (e: AuthenticationException) {
         throw LoginException()
     }
