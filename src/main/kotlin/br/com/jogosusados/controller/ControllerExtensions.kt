@@ -2,10 +2,10 @@ package br.com.jogosusados.controller
 
 import br.com.jogosusados.model.user.User
 import br.com.jogosusados.repository.UserRepository
+import java.net.URI
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 
 fun UserRepository.getUser(userDetails: UserDetails): User {
     val email = userDetails.username

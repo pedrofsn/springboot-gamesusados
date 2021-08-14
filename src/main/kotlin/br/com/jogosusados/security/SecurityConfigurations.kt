@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfigurations : WebSecurityConfigurerAdapter() {
 
     @Autowired
-    private lateinit var autenticacaoService: AuthenticationService
+    private lateinit var authService: AuthenticationService
 
     @Autowired
     private lateinit var tokenService: TokenService
@@ -36,7 +36,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     //Configuracoes de autenticacao
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(autenticacaoService).passwordEncoder(BCryptPasswordEncoder())
+        auth.userDetailsService(authService).passwordEncoder(BCryptPasswordEncoder())
     }
 
     //Configuracoes de autorizacao
@@ -46,7 +46,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET, "/games").permitAll()
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
-            //.antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
+            .antMatchers(HttpMethod.POST, "/users/register").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
             //.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
             .antMatchers("/h2-console/**").permitAll()

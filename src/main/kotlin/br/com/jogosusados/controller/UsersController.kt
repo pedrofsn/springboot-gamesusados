@@ -9,7 +9,7 @@ import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -27,7 +27,7 @@ class UsersController {
     @Autowired
     lateinit var tokenService: TokenService
 
-    @GetMapping
+    @PostMapping("/register")
     fun registerUser(@RequestBody @Valid form: UserPOST): ResponseEntity<LoggedDTO> {
         return usersRepository.save(form.toEntity(Regular)).toLogin()
             .let { authManager.authenticate(it) }
