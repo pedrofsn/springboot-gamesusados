@@ -9,12 +9,12 @@ data class UserPOST(
     val email: String,
     val password: String
 ) {
-    fun toEntity(type: UserType) = User(
+    fun toEntity(type: UserType, passwordEncrypted : String) = User(
         id = 0,
         name = name,
         phone = phone,
         email = email,
-        password = password,
+        password = passwordEncrypted,
         type = type
     )
 }

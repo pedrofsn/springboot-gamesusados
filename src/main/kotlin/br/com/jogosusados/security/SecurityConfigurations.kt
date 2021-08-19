@@ -30,13 +30,16 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     private lateinit var userRepository: UserRepository
 
     @Bean
+    fun encoder() = BCryptPasswordEncoder()
+
+    @Bean
     @Throws(Exception::class)
     override fun authenticationManager(): AuthenticationManager = super.authenticationManager()
 
     //Configuracoes de autenticacao
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(authService).passwordEncoder(BCryptPasswordEncoder())
+        auth.userDetailsService(authService).passwordEncoder(encoder())
     }
 
     //Configuracoes de autorizacao
