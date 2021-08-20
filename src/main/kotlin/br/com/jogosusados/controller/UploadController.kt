@@ -11,6 +11,7 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletResponse
+import kotlin.io.path.outputStream
 import org.h2.util.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -42,28 +43,23 @@ class UploadController {
         // TODO [pedrofsn] tratamento do tamanho do arquivo
         // TODO [pedrofsn] limpar formatações e caracteres especiais do nome da pasta para evitar injections e problemas com nomes de pastas
         root.createFolder()
-        val folderPath = getFolderPath(folderName)
-        folderPath.createFolder()
+        val folderPath = getFolderPath(folderName).also { it.createFolder() }
 
         val fileName = "${getTimeStamp()}_${file.originalFilename.orEmpty()}"
-        val pathFile: Path
-        try {
-            pathFile = getFilePath(folderPath, fileName)
-            Files.copy(file.inputStream, pathFile)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        val pathFile: Path = getFilePath(folderPath, fileName)
+        IOUtils.copy(file.inputStream, pathFile.outputStream())
 
         // TODO [pedrofsn] Será que tem como pegar o valor da annotation do controller dinamicamente? Se sim, matar o "images" do path
-        val newUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("images/{folderName}/{fileName}")
-            .buildAndExpand(folderName, fileName)
-            .toUri()
-
-        val response = ResponseImageUploaded(folder = folderName, fileName = fileName, url = newUri.toString())
-
-        return ResponseEntity.created(newUri).body(response)
+        val imageUrl = createImageURL(folderName, fileName)
+        val response = ResponseImageUploaded(folder = folderName, fileName = fileName, url = imageUrl.toString())
+        return ResponseEntity.created(imageUrl).body(response)
     }
+
+    private fun createImageURL(folderName: String, fileName: String) = ServletUriComponentsBuilder
+        .fromCurrentContextPath()
+        .path("images/{folderName}/{fileName}")
+        .buildAndExpand(folderName, fileName)
+        .toUri()
 
     private fun getTimeStamp(): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
@@ -89,13 +85,16 @@ class UploadController {
         @PathVariable("fileName") fileName: String,
         response: HttpServletResponse
     ) {
-        val folderPath = getFolderPath(folderName)
-        val filePath = getFilePath(folderPath, fileName)
-        val file = filePath.toFile()
-        val stream = FileInputStream(file)
+        val stream = FileInputStream(getFile(folderName, fileName))
         IOUtils.copy(stream, response.outputStream)
     }
 
     private fun getFilePath(folderPath: Path, fileName: String) = folderPath.resolve(fileName)
     private fun getFolderPath(folderName: String) = File(root.toFile(), folderName).toPath()
+
+    private fun getFile(folderName: String, fileName: String): File {
+        val folderPath = getFolderPath(folderName)
+        val filePath = getFilePath(folderPath, fileName)
+        return filePath.toFile()
+    }
 }
