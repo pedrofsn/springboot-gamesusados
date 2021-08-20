@@ -47,6 +47,9 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.headers().frameOptions().disable()
         http.authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/uploadStatus").permitAll()
+            .antMatchers(HttpMethod.GET, "/images/*").permitAll()
+            .antMatchers(HttpMethod.POST, "/upload").permitAll()
             .antMatchers(HttpMethod.GET, "/games").permitAll()
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
             .antMatchers(HttpMethod.POST, "/users/register").permitAll()
