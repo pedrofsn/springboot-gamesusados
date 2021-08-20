@@ -1,5 +1,8 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.error.FileEmptyException
+import br.com.jogosusados.payload.ResponseImageUploaded
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.file.Files
@@ -10,51 +13,64 @@ import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletResponse
 import org.h2.util.IOUtils
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Controller
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 
-@Controller
+@RestController
+@RequestMapping("images")
 class UploadController {
 
-    private val root = Paths.get("uploads")
+    private val root: Path = Paths.get("uploads")
 
-    @PostMapping("/upload")
-    fun singleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String? {
-        if (file.isEmpty) {
-            redirectAttributes.addFlashAttribute("message", "Please select a file to upload")
-            return "redirect:uploadStatus"
-        }
+    @PostMapping("/upload/{folderName}")
+    fun singleFileUpload(
+        @PathVariable("folderName") folderName: String,
+        @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<ResponseImageUploaded> {
+        if (file.isEmpty) throw FileEmptyException()
 
+        // TODO [pedrofsn] tratamento quando não enviar o arquivo | MultipartException: Current request is not a multipart request
+        // TODO [pedrofsn] tratamento do tamanho do disco
+        // TODO [pedrofsn] tratamento do tamanho do arquivo
+        // TODO [pedrofsn] limpar formatações e caracteres especiais do nome da pasta para evitar injections e problemas com nomes de pastas
         root.createFolder()
+        val folderPath = getFolderPath(folderName)
+        folderPath.createFolder()
 
+        val fileName = "${getTimeStamp()}_${file.originalFilename.orEmpty()}"
+        val pathFile: Path
         try {
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-            val now = LocalDateTime.now()
-            val timestamp = formatter.format(now).replace(" ", "_")
-                .replace("/", "-")
-                .replace(":", "-")
-
-            val fileName = "${timestamp}_${file.originalFilename.orEmpty()}"
-            val path = root.resolve(fileName)
-            Files.copy(file.inputStream, path)
-
-            /* Get the file and save it somewhere
-            val bytes = file.bytes
-            val path: Path = Paths.get(UPLOADED_FOLDER + file.originalFilename)
-            Files.write(path, bytes)
-            */
-            redirectAttributes.addFlashAttribute("message", "You successfully uploaded '${file.originalFilename}'")
-
+            pathFile = getFilePath(folderPath, fileName)
+            Files.copy(file.inputStream, pathFile)
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return "redirect:/uploadStatus"
+
+        // TODO [pedrofsn] Será que tem como pegar o valor da annotation do controller dinamicamente? Se sim, matar o "images" do path
+        val newUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("images/{folderName}/{fileName}")
+            .buildAndExpand(folderName, fileName)
+            .toUri()
+
+        val response = ResponseImageUploaded(folder = folderName, fileName = fileName, url = newUri.toString())
+
+        return ResponseEntity.created(newUri).body(response)
+    }
+
+    private fun getTimeStamp(): String {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val now = LocalDateTime.now()
+        return formatter.format(now).replace(" ", "_")
+            .replace("/", "-")
+            .replace(":", "-")
     }
 
     private fun Path.createFolder() {
@@ -67,15 +83,19 @@ class UploadController {
         }
     }
 
-    @GetMapping("/uploadStatus")
-    fun uploadStatus() = "uploadStatus"
-
-    @GetMapping(path = ["/images/{fileName}"], produces = [MediaType.IMAGE_PNG_VALUE])
-    fun getImage(@PathVariable fileName: String, response : HttpServletResponse) {
-        val path = root.resolve(fileName)
-        val file = path.toFile()
+    @GetMapping(path = ["/{folderName}/{fileName}"], produces = [MediaType.IMAGE_PNG_VALUE])
+    fun getImage(
+        @PathVariable("folderName") folderName: String,
+        @PathVariable("fileName") fileName: String,
+        response: HttpServletResponse
+    ) {
+        val folderPath = getFolderPath(folderName)
+        val filePath = getFilePath(folderPath, fileName)
+        val file = filePath.toFile()
         val stream = FileInputStream(file)
         IOUtils.copy(stream, response.outputStream)
     }
 
+    private fun getFilePath(folderPath: Path, fileName: String) = folderPath.resolve(fileName)
+    private fun getFolderPath(folderName: String) = File(root.toFile(), folderName).toPath()
 }

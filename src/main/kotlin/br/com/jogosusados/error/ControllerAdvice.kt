@@ -15,6 +15,7 @@ class ControllerAdvice {
         GameAnnouncementNotFoundException::class,
         GameNotFoundException::class,
         PlatformNotFoundException::class,
+        FileEmptyException::class,
     )
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleNotFound(ex: Exception?, request: WebRequest?) = HttpStatus.NOT_FOUND.toResponse(ex)

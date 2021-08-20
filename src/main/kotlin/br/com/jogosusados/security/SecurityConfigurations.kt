@@ -36,19 +36,19 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun authenticationManager(): AuthenticationManager = super.authenticationManager()
 
-    //Configuracoes de autenticacao
+    // Authentication settings
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.userDetailsService(authService).passwordEncoder(encoder())
     }
 
-    //Configuracoes de autorizacao
+    // Authorization settings
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.headers().frameOptions().disable()
         http.authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/uploadStatus").permitAll()
-            .antMatchers(HttpMethod.GET, "/images/*").permitAll()
+            .antMatchers(HttpMethod.GET, "/images/*/*").permitAll()
+            .antMatchers(HttpMethod.POST, "/images/upload/*").permitAll()
             .antMatchers(HttpMethod.POST, "/upload").permitAll()
             .antMatchers(HttpMethod.GET, "/games").permitAll()
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
@@ -65,7 +65,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             )
     }
 
-    //Configuracoes de recursos estaticos(js, css, imagens, etc.)
+    // Static resources settings (js, css, images, etc.)
     @Throws(Exception::class)
     override fun configure(web: WebSecurity) {
         web.ignoring().antMatchers(
