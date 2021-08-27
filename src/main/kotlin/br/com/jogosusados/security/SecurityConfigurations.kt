@@ -1,6 +1,7 @@
 package br.com.jogosusados.security
 
 
+import br.com.jogosusados.model.user.Admin
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -47,16 +49,9 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.headers().frameOptions().disable()
         http.authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/images/*/*").permitAll()
-            .antMatchers(HttpMethod.POST, "/images/upload/*").permitAll()
-            .antMatchers(HttpMethod.POST, "/upload").permitAll()
-            .antMatchers(HttpMethod.GET, "/games").permitAll()
-            .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/users/register").permitAll()
-            .antMatchers(HttpMethod.POST, "/auth").permitAll()
-            //.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-            .antMatchers("/h2-console/**").permitAll()
-            .anyRequest().authenticated()
+            .ruleUsers()
+            .ruleManager()
+            .ruleStaticResources()
             .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().addFilterBefore(
@@ -76,4 +71,23 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             "/swagger-resources/**"
         )
     }
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleUsers(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
+        return antMatchers(HttpMethod.GET, "/images/*/*").permitAll()
+            .antMatchers(HttpMethod.POST, "/images/upload/*").permitAll()
+            .antMatchers(HttpMethod.POST, "/upload").permitAll()
+            .antMatchers(HttpMethod.GET, "/games").permitAll()
+            .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/users/register").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth").permitAll()
+    }
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
+        return antMatchers("/h2-console/**").permitAll().anyRequest().authenticated()//.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+    }
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleManager() = and()
+        .authorizeRequests()
+        .antMatchers(HttpMethod.POST, "/users/register/manager")
+        .hasAuthority(Admin.authority)
 }
