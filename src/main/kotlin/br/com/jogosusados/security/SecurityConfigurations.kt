@@ -49,9 +49,9 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.headers().frameOptions().disable()
         http.authorizeRequests()
-            .ruleUsers()
-            .ruleManager()
-            .ruleStaticResources()
+            .handleOpenEndpoints()
+            .handleAdminEndpoints()
+            .handleStaticResources()
             .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().addFilterBefore(
@@ -72,7 +72,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         )
     }
 
-    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleUsers(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleOpenEndpoints(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
         return antMatchers(HttpMethod.GET, "/images/*/*").permitAll()
             .antMatchers(HttpMethod.POST, "/images/upload/*").permitAll()
             .antMatchers(HttpMethod.POST, "/upload").permitAll()
@@ -82,11 +82,11 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
     }
 
-    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
         return antMatchers("/h2-console/**").permitAll().anyRequest().authenticated()//.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
     }
 
-    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.ruleManager() = and()
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, "/users/register/manager")
         .hasAuthority(Admin.authority)
