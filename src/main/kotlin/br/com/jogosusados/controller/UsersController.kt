@@ -1,6 +1,8 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.model.user.Manager
 import br.com.jogosusados.model.user.Regular
+import br.com.jogosusados.model.user.UserType
 import br.com.jogosusados.model.user.toUsernamePasswordAuthenticationToken
 import br.com.jogosusados.payload.LoggedDTO
 import br.com.jogosusados.payload.UserPOST
@@ -9,7 +11,10 @@ import br.com.jogosusados.security.TokenService
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -30,9 +35,24 @@ class UsersController {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @PostMapping("/register")
-    fun registerUser(@RequestBody @Valid form: UserPOST, request: HttpServletRequest): ResponseEntity<LoggedDTO> {
-        val passwordEncrypted = passwordEncoder.encode(form.password)
-        val entity = form.toEntity(Regular, passwordEncrypted)
+    fun registerUserRegular(
+        @RequestBody @Valid form: UserPOST,
+        request: HttpServletRequest
+    ) = form.createUser(Regular)
+
+    @PostMapping("/register/manager")
+    fun registerUserManager(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @RequestBody @Valid form: UserPOST,
+        request: HttpServletRequest
+    ): ResponseEntity<LoggedDTO> = usersRepository.getUser(userDetails)
+        .takeIf { it.isAdmin() }
+        ?.let { form.createUser(Manager) }
+        ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
+    private fun UserPOST.createUser(type: UserType): ResponseEntity<LoggedDTO> {
+        val passwordEncrypted = passwordEncoder.encode(password)
+        val entity = toEntity(type, passwordEncrypted)
         return usersRepository.save(entity).toUsernamePasswordAuthenticationToken()
             .let { tokenService.createToken(it) }
             .let { ResponseEntity.ok(LoggedDTO(it)) }
