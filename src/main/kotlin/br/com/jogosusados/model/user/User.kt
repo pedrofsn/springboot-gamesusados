@@ -22,18 +22,16 @@ data class User(
 ) : UserDetails {
 
     override fun getAuthorities() = listOf(type)
-
     override fun getPassword(): String = password
-
     override fun getUsername(): String = email
 
     override fun isAccountNonExpired(): Boolean = true
-
     override fun isAccountNonLocked(): Boolean = true
-
     override fun isCredentialsNonExpired(): Boolean = true
 
     override fun isEnabled(): Boolean = true
+
+    fun isAdmin() = authorities.contains(Admin)
 
     fun toDTO() = OwnerDTO(
         name = name,
