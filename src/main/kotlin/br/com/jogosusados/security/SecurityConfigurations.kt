@@ -2,6 +2,8 @@ package br.com.jogosusados.security
 
 
 import br.com.jogosusados.model.user.Admin
+import br.com.jogosusados.model.user.Manager
+import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -51,6 +53,8 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         http.authorizeRequests()
             .handleOpenEndpoints()
             .handleAdminEndpoints()
+            .handleManagerEndpoints()
+            .handleLoggedInEndpoints()
             .handleStaticResources()
             .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -85,6 +89,16 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
         return antMatchers("/h2-console/**").permitAll().anyRequest().authenticated()//.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
     }
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleManagerEndpoints() = and()
+        .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/flag")
+        .hasAuthority(Manager.authority)
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedInEndpoints() = and()
+        .authorizeRequests()
+        .antMatchers(HttpMethod.POST, "/flag")
+        .hasAuthority(Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
