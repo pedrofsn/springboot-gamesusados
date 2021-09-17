@@ -5,5 +5,6 @@ class GameAnnouncementNotFoundException : CustomNotFoundException("Anúncio de j
 class GameNotFoundException : CustomNotFoundException("Jogo não encontrado")
 class PlatformNotFoundException : CustomNotFoundException("Plataforma não encontrada")
 class FileEmptyException : CustomNotFoundException("Arquivo vazio")
+class FailToFlagContentException : CustomNotFoundException("Erro ao denunciar o conteúdo")
 
 class LoginException : CustomNotFoundException("Usuário ou senha inválidos")
