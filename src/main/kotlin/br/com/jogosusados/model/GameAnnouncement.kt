@@ -3,7 +3,12 @@ package br.com.jogosusados.model
 import br.com.jogosusados.model.user.User
 import br.com.jogosusados.payload.AnnouncementDTO
 import br.com.jogosusados.payload.GameAnnouncementDTO
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 
 @Entity
@@ -17,7 +22,9 @@ data class GameAnnouncement(
     val owner: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    var game: Game
+    var game: Game,
+
+    var enabled : Boolean = false
 ) : Metadata() {
 
     fun toDTO() = GameAnnouncementDTO(
