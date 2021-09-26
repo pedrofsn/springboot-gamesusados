@@ -1,6 +1,6 @@
 package br.com.jogosusados.model
 
-import br.com.jogosusados.payload.PayloadFlagContent
+import br.com.jogosusados.payload.PayloadReportContent
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne
 
 
 @Entity
-data class FlagContent(
+data class ReportContent(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
@@ -26,7 +26,7 @@ data class FlagContent(
     fun isGame() = game != null
     fun isAnnouncement() = announcement != null
 
-    fun toDTO() = PayloadFlagContent(
+    fun toDTO() = PayloadReportContent(
         id = id,
         description = description,
         game = game?.toDTO(),

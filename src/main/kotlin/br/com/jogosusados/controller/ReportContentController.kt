@@ -1,12 +1,12 @@
 package br.com.jogosusados.controller
 
 import br.com.jogosusados.error.ErrorDTO
-import br.com.jogosusados.error.FailToFlagContentException
-import br.com.jogosusados.payload.PayloadFlagContent
-import br.com.jogosusados.payload.PayloadRegisterFlagContent
-import br.com.jogosusados.repository.FlagContentRepository
+import br.com.jogosusados.error.FailWhenReportContentException
+import br.com.jogosusados.payload.PayloadReportContent
+import br.com.jogosusados.payload.PayloadSimpleReportContent
 import br.com.jogosusados.repository.GameAnnouncementRepository
 import br.com.jogosusados.repository.GameRepository
+import br.com.jogosusados.repository.ReportContentRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("flag")
-class FlagContentController {
+@RequestMapping("report")
+class ReportContentController {
 
     @Autowired
-    lateinit var flagContentRepository: FlagContentRepository
+    lateinit var reportContentRepository: ReportContentRepository
 
     @Autowired
     lateinit var gameRepository: GameRepository
@@ -39,12 +39,12 @@ class FlagContentController {
     @GetMapping
     fun getList(
         @PageableDefault(sort = ["description"], direction = Direction.DESC, page = 0, size = 10) pageable: Pageable
-    ): Page<PayloadFlagContent> = flagContentRepository.findAll(pageable).map { it.toDTO() }
+    ): Page<PayloadReportContent> = reportContentRepository.findAll(pageable).map { it.toDTO() }
 
     @PostMapping
     fun save(
         @AuthenticationPrincipal userDetails: UserDetails,
-        @RequestBody body: PayloadRegisterFlagContent,
+        @RequestBody body: PayloadSimpleReportContent,
         uriBuilder: UriComponentsBuilder
     ): ResponseEntity<ErrorDTO> {
 
@@ -59,10 +59,10 @@ class FlagContentController {
         }
 
         return entity?.let {
-            val saved = flagContentRepository.save(entity)
+            val saved = reportContentRepository.save(entity)
             val response = ErrorDTO(message = body.getSuccessMessage(), id = saved.id)
-            return ResponseEntity.ok(response)
-        } ?: throw FailToFlagContentException()
+            return@let ResponseEntity.ok(response)
+        } ?: throw FailWhenReportContentException()
     }
 
 }

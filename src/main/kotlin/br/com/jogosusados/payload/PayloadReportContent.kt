@@ -1,6 +1,6 @@
 package br.com.jogosusados.payload
 
-data class PayloadFlagContent(
+data class PayloadReportContent(
     val id: Long,
     val description: String,
     val game: GameDTO?,
