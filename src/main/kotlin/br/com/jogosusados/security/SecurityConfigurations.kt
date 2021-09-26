@@ -97,7 +97,8 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedInEndpoints() = and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/report")
+        //.antMatchers(HttpMethod.POST, "/report")
+        .antMatchers(HttpMethod.GET, "/announcements/**")
         .hasAuthority(Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
