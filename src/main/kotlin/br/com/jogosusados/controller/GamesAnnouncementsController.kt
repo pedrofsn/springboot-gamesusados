@@ -1,5 +1,6 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.error.ErrorDTO
 import br.com.jogosusados.error.GameAnnouncementNotFoundException
 import br.com.jogosusados.error.GameNotFoundException
 import br.com.jogosusados.model.GameAnnouncement
@@ -62,9 +63,18 @@ class GamesAnnouncementsController {
     ): ResponseEntity<GameAnnouncementDTO> {
         val game = gameRepository.findByIdOrNull(idGame) ?: throw GameNotFoundException()
         val user = usersRepository.getUser(userDetails)
-        val gameAnnouncent = GameAnnouncement(price = price, owner = user, game = game, id = 0)
-        val saved = gamesAnnouncementsRepository.save(gameAnnouncent)
-        return uriBuilder.toResponseEntity(saved.id, gameAnnouncent.toDTO())
+        val gameAnnouncement = GameAnnouncement(price = price, owner = user, game = game, id = 0)
+        val saved = gamesAnnouncementsRepository.save(gameAnnouncement)
+        return uriBuilder.toResponseEntity(saved.id, gameAnnouncement.toDTO())
     }
 
+    @PostMapping("/{id}/toggle/{enabled}")
+    fun toggleAnnouncement(@PathVariable id: Long, @PathVariable enabled: Boolean): ResponseEntity<ErrorDTO> {
+        return gamesAnnouncementsRepository.findByIdOrNull(id)?.run {
+            this.enabled = enabled
+            gamesAnnouncementsRepository.save(this)
+            val statusMessage = if (enabled) "habilitado" else "desabilitado"
+            ResponseEntity.ok(ErrorDTO(message = "Anúncio $statusMessage", id = id))
+        } ?: throw GameAnnouncementNotFoundException()
+    }
 }
