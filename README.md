@@ -6,3 +6,4 @@
 - Upload/Consumo de imagem
 - Denúncia de conteúdo (game ou anúncio) por usuário logado
 - Listagem de denúncias de conteúdo (para gerentes)
+- Ativar/Desativar anúncios (para gerentes)
