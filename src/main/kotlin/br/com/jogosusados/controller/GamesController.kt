@@ -64,4 +64,9 @@ class GamesController {
         } ?: throw PlatformNotFoundException()
     }
 
+    @GetMapping("platform/{idPlatform}")
+    fun findyGamePlatformById(@PathVariable idPlatform: Long): List<GameDTO> {
+        return gamesRepository.findGameByGamePlatform_Id(idPlatform).map { it.toDTO() }
+    }
+
 }

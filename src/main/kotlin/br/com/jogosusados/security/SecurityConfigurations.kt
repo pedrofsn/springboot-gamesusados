@@ -100,6 +100,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .authorizeRequests()
         .antMatchers(HttpMethod.GET, "/announcements/*").permitAll()
         .antMatchers(HttpMethod.GET, "/announcements/game/*").permitAll()
+        .antMatchers(HttpMethod.GET, "/games/platform/*").permitAll()
         .antMatchers(HttpMethod.GET, "/announcements/game/*/price/*")
         .hasAuthority(Regular.authority)
 

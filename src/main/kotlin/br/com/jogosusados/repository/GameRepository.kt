@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface GameRepository : JpaRepository<Game, Long> {
     fun findGameByTitleContainsIgnoreCase(name: String, pagination: Pageable): Page<Game>
+    fun findGameByGamePlatform_Id(id: Long): List<Game>
 }

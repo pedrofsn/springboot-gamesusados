@@ -11,7 +11,7 @@ data class GamePlatform(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-    val name: String,
+    val name: String
 ) {
     fun toDTO() = GamePlatformDTO(id = id, title = name)
 }
