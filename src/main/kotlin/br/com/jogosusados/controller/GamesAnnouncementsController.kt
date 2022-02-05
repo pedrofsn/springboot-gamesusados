@@ -54,6 +54,14 @@ class GamesAnnouncementsController {
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("my-games")
+    fun getMyGameAnnouncements(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<List<GameAnnouncementDTO>> {
+        val user = usersRepository.getUser(userDetails)
+        val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByOwnerId(idOwner = user.id)
+        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO() }
+        return ResponseEntity.ok(response)
+    }
+
     @PostMapping("game/{idGame}/price/{price}")
     fun saveAnnouncement(
         @AuthenticationPrincipal userDetails: UserDetails,

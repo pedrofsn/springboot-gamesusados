@@ -9,6 +9,5 @@ interface GameAnnouncementRepository : JpaRepository<GameAnnouncement, Long> {
     fun findByGameIdAndEnabledTrue(idGame: Long): List<GameAnnouncement>
     fun findByGameIdAndEnabledFalse(idGame: Long): List<GameAnnouncement>
 
-    // TODO fazer mais um endpoint para -> listar des jogos de um autor
-
+    fun findByOwnerId(idOwner: Long): List<GameAnnouncement>
 }
