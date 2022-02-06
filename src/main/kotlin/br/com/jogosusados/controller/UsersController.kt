@@ -5,6 +5,7 @@ import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.model.user.UserType
 import br.com.jogosusados.model.user.toUsernamePasswordAuthenticationToken
 import br.com.jogosusados.payload.LoggedDTO
+import br.com.jogosusados.payload.ProfileDTO
 import br.com.jogosusados.payload.UserPOST
 import br.com.jogosusados.repository.UserRepository
 import br.com.jogosusados.security.TokenService
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -56,5 +58,11 @@ class UsersController {
         return usersRepository.save(entity).toUsernamePasswordAuthenticationToken()
             .let { tokenService.createToken(it) }
             .let { ResponseEntity.ok(LoggedDTO(it)) }
+    }
+
+    @GetMapping("my-profile")
+    fun getMyProfile(@AuthenticationPrincipal userDetails: UserDetails) : ProfileDTO {
+        val user = usersRepository.getUser(userDetails)
+        return user.toProfileDTO()
     }
 }

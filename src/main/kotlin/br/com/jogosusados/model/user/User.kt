@@ -1,6 +1,7 @@
 package br.com.jogosusados.model.user
 
 import br.com.jogosusados.payload.OwnerDTO
+import br.com.jogosusados.payload.ProfileDTO
 import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -37,6 +38,13 @@ data class User(
         name = name,
         phone = phone,
         email = email
+    )
+
+    fun toProfileDTO() = ProfileDTO(
+        name = name,
+        phone = phone,
+        email = email,
+        type = type.typeName
     )
 }
 
