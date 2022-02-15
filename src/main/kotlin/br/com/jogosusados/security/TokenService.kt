@@ -41,16 +41,20 @@ class TokenService {
 
     fun doGenerateRefreshToken(claims: Map<String, Any>, subject: String?): String {
         val refreshExpirationDateInMs = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(Date(System.currentTimeMillis()))
+        return Jwts.builder()
+            .setIssuer("Games Usados")
+            .setClaims(claims)
+            .setSubject(subject)
+            .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(Date(System.currentTimeMillis() + refreshExpirationDateInMs))
-            .signWith(SignatureAlgorithm.HS512, secret).compact()
+            .signWith(SignatureAlgorithm.HS256, secret).compact()
     }
 
     fun getUserIdFromToken(token: String?) = getClaims(token).body.subject.toLong()
     private fun getClaims(token: String?) = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
 
     fun validateToken(authToken: String?) = try {
-        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken)
+        Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken)
         true
     } catch (ex: SignatureException) {
         throw BadCredentialsException("INVALID_CREDENTIALS", ex)
