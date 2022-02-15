@@ -15,7 +15,6 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 
-
 @Service
 class TokenService {
 
@@ -40,7 +39,7 @@ class TokenService {
     }
 
     fun doGenerateRefreshToken(claims: Map<String, Any>, subject: String?): String {
-        val refreshExpirationDateInMs = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
+        val refreshExpirationDateInMs = TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)
         return Jwts.builder()
             .setIssuer("Games Usados")
             .setClaims(claims)
