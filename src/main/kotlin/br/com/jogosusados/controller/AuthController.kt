@@ -46,10 +46,12 @@ class AuthController {
     @Throws(Exception::class)
     fun refreshToken(request: HttpServletRequest): ResponseEntity<LoggedDTO>? {
         // From the HttpRequest get the claims
-        val claims = request.getAttribute("claims") as DefaultClaims
-        val expectedMap = getMapFromIoJsonwebtokenClaims(claims)
-        val token: String = tokenService.doGenerateRefreshToken(expectedMap, expectedMap["sub"].toString())
-        return ResponseEntity.ok(LoggedDTO(token))
+        (request.getAttribute("claims") as? DefaultClaims)?.let { claims ->
+            val expectedMap = getMapFromIoJsonwebtokenClaims(claims)
+            val token: String = tokenService.doGenerateRefreshToken(expectedMap, expectedMap["sub"].toString())
+            return ResponseEntity.ok(LoggedDTO(token))
+        }
+        return ResponseEntity.badRequest().build()
     }
 
     fun getMapFromIoJsonwebtokenClaims(claims: DefaultClaims): Map<String, Any> {
