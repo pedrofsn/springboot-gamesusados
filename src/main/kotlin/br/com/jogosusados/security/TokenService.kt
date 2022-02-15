@@ -2,16 +2,23 @@ package br.com.jogosusados.security
 
 
 import br.com.jogosusados.model.user.User
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.SignatureException
+import io.jsonwebtoken.UnsupportedJwtException
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
-import java.util.Date
 
 
 @Service
 class TokenService {
+
     @Value("\${forum.jwt.expiration}")
     private lateinit var expiration: String
 
@@ -32,13 +39,28 @@ class TokenService {
             .compact()
     }
 
-    fun isTokenValido(token: String?) = try {
-        getClaims(token)
-        true
-    } catch (e: Exception) {
-        false
+    fun doGenerateRefreshToken(claims: Map<String, Any>, subject: String?): String {
+        val refreshExpirationDateInMs = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(Date(System.currentTimeMillis()))
+            .setExpiration(Date(System.currentTimeMillis() + refreshExpirationDateInMs))
+            .signWith(SignatureAlgorithm.HS512, secret).compact()
     }
 
-    fun getIdUsuario(token: String?) = getClaims(token).body.subject.toLong()
+    fun getUserIdFromToken(token: String?) = getClaims(token).body.subject.toLong()
     private fun getClaims(token: String?) = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
+
+    fun validateToken(authToken: String?) = try {
+        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken)
+        true
+    } catch (ex: SignatureException) {
+        throw BadCredentialsException("INVALID_CREDENTIALS", ex)
+    } catch (ex: MalformedJwtException) {
+        throw BadCredentialsException("INVALID_CREDENTIALS", ex)
+    } catch (ex: UnsupportedJwtException) {
+        throw BadCredentialsException("INVALID_CREDENTIALS", ex)
+    } catch (ex: IllegalArgumentException) {
+        throw BadCredentialsException("INVALID_CREDENTIALS", ex)
+    } catch (ex: ExpiredJwtException) {
+        throw ex
+    }
 }

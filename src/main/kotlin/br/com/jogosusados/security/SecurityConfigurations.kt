@@ -83,6 +83,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.GET, "/games").permitAll()
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
             .antMatchers(HttpMethod.POST, "/users/register").permitAll()
+            .antMatchers(HttpMethod.GET, "/auth/refreshtoken").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
     }
 
