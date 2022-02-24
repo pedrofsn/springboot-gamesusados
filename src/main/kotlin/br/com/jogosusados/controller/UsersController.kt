@@ -36,6 +36,9 @@ class UsersController {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+    @Autowired
+    lateinit var imageUtilities: ImageUtilities
+
     @PostMapping("/register")
     fun registerUserRegular(
         @RequestBody @Valid form: UserPOST,
@@ -61,8 +64,10 @@ class UsersController {
     }
 
     @GetMapping("my-profile")
-    fun getMyProfile(@AuthenticationPrincipal userDetails: UserDetails) : ProfileDTO {
+    fun getMyProfile(@AuthenticationPrincipal userDetails: UserDetails): ProfileDTO {
         val user = usersRepository.getUser(userDetails)
-        return user.toProfileDTO()
+        val fileName = imageUtilities.addExtension(user.id.toString())
+        val image = imageUtilities.createImageURL("my-profile", fileName)
+        return user.toProfileDTO().copy(image = image.toString())
     }
 }
