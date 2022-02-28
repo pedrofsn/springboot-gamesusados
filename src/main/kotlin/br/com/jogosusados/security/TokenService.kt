@@ -46,7 +46,7 @@ class TokenService {
             .setSubject(subject)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(Date(System.currentTimeMillis() + refreshExpirationDateInMs))
-            .signWith(SignatureAlgorithm.HS256, secret).compact()
+            .signWith(SignatureAlgorithm.HS512, secret).compact()
     }
 
     fun getUserIdFromToken(token: String?) = getClaims(token).body.subject.toLong()
