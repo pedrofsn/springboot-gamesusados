@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service
 @Service
 class TokenService {
 
-    @Value("\${forum.jwt.expiration}")
+    @Value("\${sistema.jwt.expiration}")
     private lateinit var expiration: String
 
-    @Value("\${forum.jwt.secret}")
+    @Value("\${sistema.jwt.secret}")
     private lateinit var secret: String
 
     fun createToken(authentication: Authentication): String {
