@@ -48,7 +48,7 @@ class GamesAnnouncementsController {
     @GetMapping("game/{idGame}")
     fun getList(@PathVariable idGame: Long): ResponseEntity<GameWithAnnouncementDTO> {
         val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByGameIdAndEnabledTrue(idGame)
-        val gameDTO = announcements.firstOrNull()?.game?.toDTO() ?: throw GameAnnouncementNotFoundException()
+        val gameDTO = gameRepository.findByIdOrNull(idGame)?.toDTO() ?: throw GameAnnouncementNotFoundException()
         val announcementsDTO = announcements.map { it.toAnnouncementDTO() }
         val response = GameWithAnnouncementDTO(game = gameDTO, announcements = announcementsDTO)
         return ResponseEntity.ok(response)
