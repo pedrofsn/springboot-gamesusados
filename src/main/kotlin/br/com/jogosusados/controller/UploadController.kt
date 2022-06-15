@@ -3,11 +3,6 @@ package br.com.jogosusados.controller
 import br.com.jogosusados.error.FileEmptyException
 import br.com.jogosusados.payload.ResponseImageUploaded
 import br.com.jogosusados.repository.UserRepository
-import java.io.File
-import java.io.FileInputStream
-import java.nio.file.Path
-import javax.servlet.http.HttpServletResponse
-import kotlin.io.path.outputStream
 import org.h2.util.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -15,13 +10,15 @@ import org.springframework.http.MediaType.IMAGE_PNG
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
+import java.io.FileInputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+import javax.servlet.http.HttpServletResponse
+import kotlin.io.path.exists
 
 @RestController
 @RequestMapping("images")
@@ -48,11 +45,14 @@ class UploadController {
         // TODO [pedrofsn] limpar formatações e caracteres especiais do nome da pasta para evitar injections e problemas com nomes de pastas
         imageUtilities.createFolder()
         val folderPath = imageUtilities.getFolderPath(folderName)
-            .also { imageUtilities.createFolder() }
+        if (folderPath.exists().not()) {
+            Files.createDirectory(folderPath)
+        }
 
         val fileName = imageUtilities.getFileName(user.id, folderName, file)
         val pathFile: Path = getFilePath(folderPath, fileName)
-        IOUtils.copy(file.inputStream, pathFile.outputStream())
+
+        Files.copy(file.inputStream, pathFile, StandardCopyOption.REPLACE_EXISTING)
 
         // TODO [pedrofsn] Será que tem como pegar o valor da annotation do controller dinamicamente? Se sim, matar o "images" do path
         val imageUrl = imageUtilities.createImageURL(folderName, fileName)
