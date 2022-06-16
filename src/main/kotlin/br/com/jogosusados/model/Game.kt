@@ -14,9 +14,10 @@ data class Game(
     @ManyToOne(fetch = FetchType.LAZY)
     var gamePlatform: GamePlatform
 ) : Metadata() {
-    fun toDTO() = GameDTO(
+    fun toDTO(image: String? = null) = GameDTO(
         id = id,
         title = title,
-        platform = gamePlatform.name
+        platform = gamePlatform.name,
+        image = image
     )
 }

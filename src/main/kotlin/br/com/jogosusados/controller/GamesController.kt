@@ -33,9 +33,12 @@ class GamesController {
     @Autowired
     lateinit var platformRepository: GamePlatformRepository
 
+    @Autowired
+    lateinit var imageUtilities: ImageUtilities
+
     @GetMapping("/{id}")
     fun getDetail(@PathVariable id: Long): ResponseEntity<GameDTO> {
-        val entity = gamesRepository.findByIdOrNull(id)?.toDTO() ?: throw GameNotFoundException()
+        val entity = gamesRepository.findByIdOrNull(id)?.toDTO(imageUtilities) ?: throw GameNotFoundException()
         return ResponseEntity.ok(entity)
     }
 
@@ -44,8 +47,8 @@ class GamesController {
         @RequestParam title: String?,
         @PageableDefault(sort = ["title"], direction = Direction.DESC, page = 0, size = 10) pageable: Pageable
     ): Page<GameDTO> = when (title != null) {
-        true -> gamesRepository.findGameByTitleContainsIgnoreCase(title, pageable).map { it.toDTO() }
-        else -> gamesRepository.findAll(pageable).map { it.toDTO() }
+        true -> gamesRepository.findGameByTitleContainsIgnoreCase(title, pageable).map { it.toDTO(imageUtilities) }
+        else -> gamesRepository.findAll(pageable).map { it.toDTO(imageUtilities) }
     }
 
     @PostMapping("platform/{idPlatform}/title/{title}")
@@ -60,13 +63,13 @@ class GamesController {
             val entity = Game(id = 0, title = title, gamePlatform = platform)
             val saved = gamesRepository.save(entity)
 
-            return uriBuilder.toResponseEntity(saved.id, entity.toDTO())
+            return uriBuilder.toResponseEntity(saved.id, entity.toDTO(imageUtilities))
         } ?: throw PlatformNotFoundException()
     }
 
     @GetMapping("platform/{idPlatform}")
     fun findyGamePlatformById(@PathVariable idPlatform: Long): List<GameDTO> {
-        return gamesRepository.findGameByGamePlatform_Id(idPlatform).map { it.toDTO() }
+        return gamesRepository.findGameByGamePlatform_Id(idPlatform).map { it.toDTO(imageUtilities) }
     }
 
 }

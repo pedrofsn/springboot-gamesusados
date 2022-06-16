@@ -35,6 +35,9 @@ class GamesAnnouncementsController {
     @Autowired
     lateinit var usersRepository: UserRepository
 
+    @Autowired
+    lateinit var imageUtilities: ImageUtilities
+
     @GetMapping("/{id}")
     fun getDetail(@PathVariable id: Long): ResponseEntity<GameAnnouncementDTO> {
         try {
@@ -58,7 +61,7 @@ class GamesAnnouncementsController {
     fun getMyGameAnnouncements(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<List<GameAnnouncementDTO>> {
         val user = usersRepository.getUser(userDetails)
         val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByOwnerId(idOwner = user.id)
-        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO() }
+        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO(imageUtilities) }
         return ResponseEntity.ok(response)
     }
 

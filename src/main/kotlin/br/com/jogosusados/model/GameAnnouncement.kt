@@ -27,13 +27,12 @@ data class GameAnnouncement(
     var enabled : Boolean = false
 ) : Metadata() {
 
-    fun toDTO() = GameAnnouncementDTO(
+    fun toDTO(image: String? = null) = GameAnnouncementDTO(
         id = id,
         price = price,
-        game = game.toDTO(),
+        game = game.toDTO(image),
         owner = owner.toDTO()
     )
-
     fun toAnnouncementDTO() = AnnouncementDTO(
         id = id,
         price = price,
