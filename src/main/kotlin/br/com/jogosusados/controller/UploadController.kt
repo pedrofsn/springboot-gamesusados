@@ -55,7 +55,7 @@ class UploadController {
         Files.copy(file.inputStream, pathFile, StandardCopyOption.REPLACE_EXISTING)
 
         // TODO [pedrofsn] Será que tem como pegar o valor da annotation do controller dinamicamente? Se sim, matar o "images" do path
-        val imageUrl = imageUtilities.createImageURL(folderName, fileName)
+        val imageUrl = imageUtilities.createImageURL(fileName, folderName)
         val response = ResponseImageUploaded(folder = folderName, fileName = fileName, url = imageUrl.toString())
         return ResponseEntity.created(imageUrl).body(response)
     }

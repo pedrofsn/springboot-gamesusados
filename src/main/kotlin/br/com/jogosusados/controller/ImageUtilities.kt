@@ -18,10 +18,16 @@ class ImageUtilities {
 
     private val root: Path = Paths.get("uploads")
 
-    fun createImageURL(folderName: String, fileName: String) = ServletUriComponentsBuilder
+    fun createImageURL(fileName: String, vararg folders: String) = ServletUriComponentsBuilder
         .fromCurrentContextPath()
-        .path("images/{folderName}/{fileName}")
-        .buildAndExpand(folderName, fileName)
+        .path("images")
+        .apply {
+            for(folder in folders) {
+                path("/$folder")
+            }
+            path("/$fileName")
+        }
+        .buildAndExpand(*folders, fileName)
         .toUri()
 
     fun getFileName(idUser: Long, folderName: String, file: MultipartFile): String {

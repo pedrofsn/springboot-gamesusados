@@ -67,7 +67,7 @@ class UsersController {
     fun getMyProfile(@AuthenticationPrincipal userDetails: UserDetails): ProfileDTO {
         val user = usersRepository.getUser(userDetails)
         val fileName = imageUtilities.addExtension(user.id.toString())
-        val image = imageUtilities.createImageURL("my-profile", fileName)
+        val image = imageUtilities.createImageURL(fileName, "my-profile")
         return user.toProfileDTO().copy(image = image.toString())
     }
 }
