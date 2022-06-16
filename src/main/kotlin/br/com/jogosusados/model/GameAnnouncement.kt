@@ -3,6 +3,7 @@ package br.com.jogosusados.model
 import br.com.jogosusados.model.user.User
 import br.com.jogosusados.payload.AnnouncementDTO
 import br.com.jogosusados.payload.GameAnnouncementDTO
+import br.com.jogosusados.payload.GameDTO
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -27,10 +28,17 @@ data class GameAnnouncement(
     var enabled : Boolean = false
 ) : Metadata() {
 
-    fun toDTO(image: String? = null) = GameAnnouncementDTO(
+    fun toDTO(gameDTO: GameDTO) = GameAnnouncementDTO(
         id = id,
         price = price,
-        game = game.toDTO(image),
+        game = gameDTO,
+        owner = owner.toDTO()
+    )
+
+    fun toDTO() = GameAnnouncementDTO(
+        id = id,
+        price = price,
+        game = game.toDTO(),
         owner = owner.toDTO()
     )
     fun toAnnouncementDTO() = AnnouncementDTO(

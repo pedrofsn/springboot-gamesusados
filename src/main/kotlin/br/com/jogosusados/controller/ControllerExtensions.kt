@@ -3,7 +3,6 @@ package br.com.jogosusados.controller
 import br.com.jogosusados.model.Game
 import br.com.jogosusados.model.GameAnnouncement
 import br.com.jogosusados.model.user.User
-import br.com.jogosusados.payload.GameAnnouncementDTO
 import br.com.jogosusados.payload.GameDTO
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.http.MediaType
@@ -22,7 +21,10 @@ fun <T> UriComponentsBuilder.toResponseEntity(id: Long, body: T, path: String = 
     return ResponseEntity.created(uri).body(body)
 }
 
-fun GameAnnouncement.toDTO(imageUtilities: ImageUtilities): GameAnnouncementDTO = toDTO(imageUtilities)
+fun GameAnnouncement.toDTO(imageUtilities: ImageUtilities) = with(this) {
+    val gameDTO = game.toDTO(imageUtilities)
+    return@with toDTO(gameDTO)
+}
 
 fun Game.toDTO(imageUtilities: ImageUtilities): GameDTO {
     val fileName = "${id}.${MediaType.IMAGE_PNG.subtype}"

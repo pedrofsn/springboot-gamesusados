@@ -41,7 +41,7 @@ class GamesAnnouncementsController {
     @GetMapping("/{id}")
     fun getDetail(@PathVariable id: Long): ResponseEntity<GameAnnouncementDTO> {
         try {
-            val game = gamesAnnouncementsRepository.findById(id).get().toDTO()
+            val game = gamesAnnouncementsRepository.findById(id).get().toDTO(imageUtilities)
             return ResponseEntity.ok(game)
         } catch (exception: NoSuchElementException) {
             throw GameAnnouncementNotFoundException()
@@ -76,7 +76,7 @@ class GamesAnnouncementsController {
         val user = usersRepository.getUser(userDetails)
         val gameAnnouncement = GameAnnouncement(price = price, owner = user, game = game, id = 0)
         val saved = gamesAnnouncementsRepository.save(gameAnnouncement)
-        return uriBuilder.toResponseEntity(saved.id, gameAnnouncement.toDTO())
+        return uriBuilder.toResponseEntity(saved.id, gameAnnouncement.toDTO(imageUtilities))
     }
 
     @PostMapping("/{id}/toggle/{enabled}")
