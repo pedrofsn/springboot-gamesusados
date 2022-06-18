@@ -1,5 +1,6 @@
 package br.com.jogosusados.controller
 
+import br.com.jogosusados.error.LoginException
 import br.com.jogosusados.model.Game
 import br.com.jogosusados.model.GameAnnouncement
 import br.com.jogosusados.model.user.User
@@ -11,9 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
-fun UserRepository.getUser(userDetails: UserDetails): User {
-    val email = userDetails.username
-    return findByEmail(email).get()
+fun UserRepository.getUser(userDetails: UserDetails?): User {
+    return userDetails?.username?.takeIf { it.isNotBlank() }?.let { findByEmail(it).get() } ?: throw LoginException()
 }
 
 fun <T> UriComponentsBuilder.toResponseEntity(id: Long, body: T, path: String = "/{id}"): ResponseEntity<T> {
