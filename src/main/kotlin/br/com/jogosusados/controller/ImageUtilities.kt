@@ -34,7 +34,10 @@ class ImageUtilities {
         if(folderName == "my-profile") {
             return "$idUser.${MediaType.IMAGE_PNG.subtype}"
         }
-        return "${Calendar.getInstance().timeInMillis}.${MediaType.IMAGE_PNG.subtype}"
+        val timeInMillis = Calendar.getInstance().timeInMillis
+        val filenameWithoutExtension = file.originalFilename?.split(".")?.firstOrNull()
+        // TODO Isto permitirá a sobrescrita de arquivos com o mesmo nome do lado do servidor
+        return "${filenameWithoutExtension ?: timeInMillis}.${MediaType.IMAGE_PNG.subtype}"
     }
 
     private fun getTimeStamp(): String {
