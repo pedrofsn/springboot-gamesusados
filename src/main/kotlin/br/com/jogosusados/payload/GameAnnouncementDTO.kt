@@ -4,5 +4,6 @@ data class GameAnnouncementDTO(
     val id: Long,
     val game: GameDTO,
     val owner: OwnerDTO,
-    val price: Double
+    val price: Double,
+    val enabled: Boolean
 )

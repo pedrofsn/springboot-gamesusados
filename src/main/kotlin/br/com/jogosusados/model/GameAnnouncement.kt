@@ -32,14 +32,16 @@ data class GameAnnouncement(
         id = id,
         price = price,
         game = gameDTO,
-        owner = owner.toDTO()
+        owner = owner.toDTO(),
+        enabled = enabled
     )
 
     fun toDTO() = GameAnnouncementDTO(
         id = id,
         price = price,
         game = game.toDTO(),
-        owner = owner.toDTO()
+        owner = owner.toDTO(),
+        enabled = enabled
     )
     fun toAnnouncementDTO() = AnnouncementDTO(
         id = id,

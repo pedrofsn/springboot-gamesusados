@@ -1,6 +1,7 @@
 package br.com.jogosusados.controller
 
 import br.com.jogosusados.error.ErrorDTO
+import br.com.jogosusados.error.GameAnnouncementEnabledEqualsException
 import br.com.jogosusados.error.GameAnnouncementNotFoundException
 import br.com.jogosusados.error.GameNotFoundException
 import br.com.jogosusados.model.GameAnnouncement
@@ -82,6 +83,9 @@ class GamesAnnouncementsController {
     @PostMapping("/{id}/toggle/{enabled}")
     fun toggleAnnouncement(@PathVariable id: Long, @PathVariable enabled: Boolean): ResponseEntity<ErrorDTO> {
         return gamesAnnouncementsRepository.findByIdOrNull(id)?.run {
+            if(this.enabled == enabled) {
+                throw GameAnnouncementEnabledEqualsException()
+            }
             this.enabled = enabled
             gamesAnnouncementsRepository.save(this)
             val statusMessage = if (enabled) "habilitado" else "desabilitado"
