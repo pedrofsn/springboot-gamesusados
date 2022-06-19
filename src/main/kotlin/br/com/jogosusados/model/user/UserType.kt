@@ -11,8 +11,5 @@ sealed class UserType(val typeName: String) : GrantedAuthority {
             Manager.typeName -> Manager
             else -> Regular
         }
-        object Admin : UserType("ADMIN")
-        object Manager : UserType("MANAGER")
-        object Regular : UserType("USER")
     }
 }

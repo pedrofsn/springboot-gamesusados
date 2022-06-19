@@ -1,57 +1,25 @@
 package br.com.jogosusados.security
 
-
 import br.com.jogosusados.repository.UserRepository
-import io.jsonwebtoken.ExpiredJwtException
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.util.StringUtils
-import org.springframework.web.filter.OncePerRequestFilter
-
 
 class AuthenticationByTokenFilter(private val tokenService: TokenService, private val repository: UserRepository) :
     OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(
-        request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
-    ) {
-        val jwtToken = extractJwtFromRequest(request)
-        try {
-            if (StringUtils.hasText(jwtToken) && tokenService.validateToken(jwtToken)) {
-                login(jwtToken)
-            }
-        } catch (ex: ExpiredJwtException) {
-            val isRefreshToken = request.getHeader("isRefreshToken") ?: false
-            val requestURL = request.requestURL.toString()
-            // allow for Refresh Token creation if following conditions are true.
-            val isTrue = isRefreshToken == "true"
-            val isExpectedEndpoint = requestURL.endsWith("auth/refreshtoken")
-            if (isTrue && isExpectedEndpoint) {
-                allowForRefreshToken(ex, request)
-            } else {
-                request.setAttribute("exception", ex)
-            }
-        } catch (ex: BadCredentialsException) {
-            request.setAttribute("exception", ex)
-        } catch (ex: Exception) {
-            println(ex)
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+        val token = recoverToken(request)
+        if (tokenService.validateToken(token)) {
+            login(token)
         }
         filterChain.doFilter(request, response)
-    }
-
-    private fun allowForRefreshToken(ex: ExpiredJwtException, request: HttpServletRequest) {
-        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-            null, null, null
-        )
-        SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
-        request.setAttribute("claims", ex.claims)
     }
 
     private fun login(token: String?) {
@@ -61,11 +29,11 @@ class AuthenticationByTokenFilter(private val tokenService: TokenService, privat
         SecurityContextHolder.getContext().authentication = authentication
     }
 
-    private fun extractJwtFromRequest(request: HttpServletRequest): String? {
-        val bearerToken = request.getHeader("Authorization")
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7, bearerToken.length)
+    private fun recoverToken(request: HttpServletRequest): String? {
+        val token = request.getHeader("Authorization")
+        return when {
+            token == null || token.isEmpty() || token.startsWith("Bearer ").not() -> null
+            else -> token.substring(7, token.length)
         }
-        return null
     }
 }

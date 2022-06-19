@@ -1,9 +1,9 @@
 package br.com.jogosusados.security
 
 
-import br.com.jogosusados.model.user.UserType.Companion.Manager
-import br.com.jogosusados.model.user.UserType.Companion.Admin
-import br.com.jogosusados.model.user.UserType.Companion.Regular
+import br.com.jogosusados.model.user.Manager
+import br.com.jogosusados.model.user.Admin
+import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -98,20 +98,18 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleManagerEndpoints() = and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/report").permitAll()
-        .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*")
-        .hasAuthority(Manager.authority)
+        .antMatchers(HttpMethod.GET, "/report").hasAuthority(Manager.authority)
+        .antMatchers(HttpMethod.POST, "/games/platform/*/title/*").hasAuthority(Manager.authority)
+        .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAuthority(Manager.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedInEndpoints() = and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/announcements/*").permitAll()
-        .antMatchers(HttpMethod.GET, "/games/platform/*").permitAll()
-        .antMatchers(HttpMethod.POST, "/games/platform/*/title/*").permitAll()
-        .antMatchers(HttpMethod.POST, "/announcements/game/*/price/*")
-        .hasAuthority(Regular.authority)
+        .antMatchers(HttpMethod.GET, "/announcements/*").hasAuthority(Regular.authority)
+        .antMatchers(HttpMethod.GET, "/games/platform/*").hasAuthority(Regular.authority)
+        .antMatchers(HttpMethod.POST, "/announcements/game/*/price/*").hasAuthority(Regular.authority)
+        .antMatchers(HttpMethod.POST, "/report").hasAuthority(Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/users/register/manager")
-        .hasAuthority(Admin.authority)
+        .antMatchers(HttpMethod.POST, "/users/register/manager").hasAuthority(Admin.authority)
 }

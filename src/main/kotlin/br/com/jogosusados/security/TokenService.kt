@@ -42,8 +42,12 @@ class TokenService {
     private fun getClaims(token: String?) = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
 
     fun validateToken(authToken: String?) = try {
-        Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken)
-        true
+        if(authToken?.isNotBlank() == true) {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken)
+            true
+        } else {
+            false
+        }
     } catch (ex: SignatureException) {
         throw BadCredentialsException("INVALID_CREDENTIALS", ex)
     } catch (ex: MalformedJwtException) {

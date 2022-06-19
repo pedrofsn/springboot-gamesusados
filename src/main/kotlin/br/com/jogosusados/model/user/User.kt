@@ -1,6 +1,5 @@
 package br.com.jogosusados.model.user
 
-import br.com.jogosusados.model.user.UserType.Companion.Admin
 import br.com.jogosusados.payload.OwnerDTO
 import br.com.jogosusados.payload.ProfileDTO
 import javax.persistence.Convert
