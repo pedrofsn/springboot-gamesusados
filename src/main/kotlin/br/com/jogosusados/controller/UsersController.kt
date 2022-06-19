@@ -60,7 +60,7 @@ class UsersController {
         val entity = toEntity(type, passwordEncrypted)
         return usersRepository.save(entity).toUsernamePasswordAuthenticationToken()
             .let { tokenService.createToken(it) }
-            .let { ResponseEntity.ok(LoggedDTO(it)) }
+            .let { ResponseEntity.ok(LoggedDTO(it, type.typeName)) }
     }
 
     @GetMapping("my-profile")

@@ -93,7 +93,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     }
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
-        return antMatchers("/h2-console/**").permitAll().anyRequest().authenticated()//.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+        return antMatchers("/h2-console/**").permitAll().anyRequest().authenticated()
     }
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleManagerEndpoints() = and()
@@ -106,6 +106,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .authorizeRequests()
         .antMatchers(HttpMethod.GET, "/announcements/*").permitAll()
         .antMatchers(HttpMethod.GET, "/games/platform/*").permitAll()
+        .antMatchers(HttpMethod.POST, "/games/platform/*/title/*").permitAll()
         .antMatchers(HttpMethod.POST, "/announcements/game/*/price/*")
         .hasAuthority(Regular.authority)
 
