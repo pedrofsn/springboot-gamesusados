@@ -1,8 +1,8 @@
 package br.com.jogosusados.controller
 
-import br.com.jogosusados.model.user.Manager
-import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.model.user.UserType
+import br.com.jogosusados.model.user.UserType.Companion.Manager
+import br.com.jogosusados.model.user.UserType.Companion.Regular
 import br.com.jogosusados.model.user.toUsernamePasswordAuthenticationToken
 import br.com.jogosusados.payload.LoggedDTO
 import br.com.jogosusados.payload.ProfileDTO

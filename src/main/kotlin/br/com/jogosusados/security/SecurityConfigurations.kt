@@ -1,9 +1,9 @@
 package br.com.jogosusados.security
 
 
-import br.com.jogosusados.model.user.Admin
-import br.com.jogosusados.model.user.Manager
-import br.com.jogosusados.model.user.Regular
+import br.com.jogosusados.model.user.UserType.Companion.Manager
+import br.com.jogosusados.model.user.UserType.Companion.Admin
+import br.com.jogosusados.model.user.UserType.Companion.Regular
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean

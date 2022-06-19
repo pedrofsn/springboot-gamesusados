@@ -1,5 +1,6 @@
 package br.com.jogosusados.model.user
 
+import br.com.jogosusados.model.user.UserType.Companion.Regular
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
