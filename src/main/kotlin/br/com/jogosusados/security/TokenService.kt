@@ -38,17 +38,6 @@ class TokenService {
             .compact()
     }
 
-    fun doGenerateRefreshToken(claims: Map<String, Any>, subject: String?): String {
-        val refreshExpirationDateInMs = TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)
-        return Jwts.builder()
-            .setIssuer("Games Usados")
-            .setClaims(claims)
-            .setSubject(subject)
-            .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(Date(System.currentTimeMillis() + refreshExpirationDateInMs))
-            .signWith(SignatureAlgorithm.HS512, secret).compact()
-    }
-
     fun getUserIdFromToken(token: String?) = getClaims(token).body.subject.toLong()
     private fun getClaims(token: String?) = Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
 
