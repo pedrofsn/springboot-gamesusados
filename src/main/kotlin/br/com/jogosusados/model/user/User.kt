@@ -33,6 +33,8 @@ data class User(
     override fun isEnabled(): Boolean = true
 
     fun isAdmin() = authorities.contains(Admin)
+    fun isManager() = authorities.contains(Manager)
+    fun isRegular() = authorities.contains(Regular)
 
     fun toDTO() = OwnerDTO(
         name = name,

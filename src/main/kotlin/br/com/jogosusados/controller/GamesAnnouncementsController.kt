@@ -81,15 +81,27 @@ class GamesAnnouncementsController {
     }
 
     @PostMapping("/{id}/toggle/{enabled}")
-    fun toggleAnnouncement(@PathVariable id: Long, @PathVariable enabled: Boolean): ResponseEntity<ErrorDTO> {
+    fun toggleAnnouncement(
+        @AuthenticationPrincipal userDetails: UserDetails,
+        @PathVariable id: Long,
+        @PathVariable enabled: Boolean
+    ): ResponseEntity<ErrorDTO> {
         return gamesAnnouncementsRepository.findByIdOrNull(id)?.run {
             if(this.enabled == enabled) {
                 throw GameAnnouncementEnabledEqualsException()
             }
-            this.enabled = enabled
-            gamesAnnouncementsRepository.save(this)
-            val statusMessage = if (enabled) "habilitado" else "desabilitado"
-            ResponseEntity.ok(ErrorDTO(message = "Anúncio $statusMessage", id = id))
+
+            val user = usersRepository.getUser(userDetails)
+            val message = if((user.isRegular() && enabled.not()) || user.isManager()) {
+                this.enabled = enabled
+                gamesAnnouncementsRepository.save(this)
+                val statusMessage = if (enabled) "habilitado" else "desabilitado"
+                "Anúncio $statusMessage"
+            } else {
+                "Você não pode realizar esta operação"
+            }
+
+            ResponseEntity.ok(ErrorDTO(message = message, id = id))
         } ?: throw GameAnnouncementNotFoundException()
     }
 }
