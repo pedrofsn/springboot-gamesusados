@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.io.File
 
 @RestController
 @RequestMapping("users")
@@ -68,6 +69,8 @@ class UsersController {
         val user = usersRepository.getUser(userDetails)
         val fileName = imageUtilities.addExtension(user.id.toString())
         val image = imageUtilities.createImageURL(fileName, "my-profile")
-        return user.toProfileDTO().copy(image = image.toString())
+        val imageURL = image.toString()
+        val fileExists = File(imageURL).exists()
+        return user.toProfileDTO().copy(image = if(fileExists) imageURL else null)
     }
 }
