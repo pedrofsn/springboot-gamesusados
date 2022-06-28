@@ -1,4 +1,4 @@
-# Descrição
+# Descrição do projeto
 Projeto backend de um sistema de anúncios de jogos. Neste sistema os usuários regulares podem cadastrar anúncios nos jogos que foram previamente cadastrados por gerentes (somente).
 
 # Funcionalidades disponíveis na API
