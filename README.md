@@ -16,6 +16,7 @@ Projeto backend de um sistema de anúncios de jogos. Neste sistema os usuários 
 - Listar anúncios
 - Listar jogos por plataforma
 - Cadastrar anúncio de um jogo
+- Desativar um anúncio próprio
 - Denunciar um jogo
 - Denunciar um anúncio
 
