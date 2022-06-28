@@ -51,10 +51,12 @@ class UsersController {
         @AuthenticationPrincipal userDetails: UserDetails,
         @RequestBody @Valid form: UserPOST,
         request: HttpServletRequest
-    ): ResponseEntity<LoggedDTO> = usersRepository.getUser(userDetails)
-        .takeIf { it.isAdmin() }
-        ?.let { form.createUser(Manager) }
-        ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    ): ResponseEntity<LoggedDTO> {
+        return usersRepository.getUser(userDetails)
+            .takeIf { it.isAdmin() }
+            ?.let { form.createUser(Manager) }
+            ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    }
 
     private fun UserPOST.createUser(type: UserType): ResponseEntity<LoggedDTO> {
         val passwordEncrypted = passwordEncoder.encode(password)
