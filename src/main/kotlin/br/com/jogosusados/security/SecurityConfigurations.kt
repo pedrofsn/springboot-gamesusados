@@ -50,18 +50,19 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.headers().frameOptions().disable()
-        http.authorizeRequests()
-            .handleOpenEndpoints()
-            .handleAdminEndpoints()
-            .handleManagerEndpoints()
-            .handleLoggedInEndpoints()
-            .handleStaticResources()
-            .and().csrf().disable()
+        http.cors().and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().addFilterBefore(
                 AuthenticationByTokenFilter(tokenService, userRepository),
                 UsernamePasswordAuthenticationFilter::class.java
             )
+            .authorizeRequests()
+            .handleOpenEndpoints()
+            .handleAdminEndpoints()
+            .handleManagerEndpoints()
+            .handleLoggedInEndpoints()
+            .handleStaticResources()
+
     }
 
     // Static resources settings (js, css, images, etc.)
