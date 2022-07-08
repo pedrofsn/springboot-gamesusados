@@ -6,19 +6,18 @@ import br.com.jogosusados.model.user.toUsernamePasswordAuthenticationToken
 import br.com.jogosusados.payload.LoggedDTO
 import br.com.jogosusados.payload.LoginPOST
 import br.com.jogosusados.security.TokenService
-import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = ["*"])
 class AuthController {
 
     @Autowired
@@ -39,6 +38,12 @@ class AuthController {
         val user = authentication.principal as User
         val usertype = user.type.typeName
         val token: String = tokenService.createToken(authentication)
-        return ResponseEntity.ok(LoggedDTO(token, usertype))
+        return ResponseEntity.ok()
+            .header("Access-Control-Allow-Origin", "*")
+            .headers {
+                it.accessControlAllowOrigin = "*"
+                it.contentType = MediaType.APPLICATION_JSON
+            }
+            .body(LoggedDTO(token, usertype))
     }
 }

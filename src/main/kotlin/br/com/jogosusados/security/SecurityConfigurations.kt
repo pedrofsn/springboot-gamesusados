@@ -90,6 +90,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
             .antMatchers(HttpMethod.POST, "/users/register").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
     }
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleStaticResources(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {

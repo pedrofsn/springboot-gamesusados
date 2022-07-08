@@ -22,6 +22,7 @@ import kotlin.io.path.exists
 
 @RestController
 @RequestMapping("images")
+@CrossOrigin(origins = ["*"])
 class UploadController {
 
     @Autowired
