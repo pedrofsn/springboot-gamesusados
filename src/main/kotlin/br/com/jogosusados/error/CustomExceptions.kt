@@ -5,6 +5,7 @@ class GameAnnouncementNotFoundException : CustomNotFoundException("Anúncio não
 class GameAnnouncementEnabledEqualsException : CustomNotFoundException("O anúncio não pode ser alterado para o mesmo status")
 class GameNotFoundException : CustomNotFoundException("Jogo não encontrado")
 class PlatformNotFoundException : CustomNotFoundException("Plataforma não encontrada")
+class PlatformFoundException : CustomNotFoundException("Plataforma já cadastrada")
 class FileEmptyException : CustomNotFoundException("Arquivo vazio")
 class FailWhenReportContentException : CustomNotFoundException("Erro ao denunciar o conteúdo")
 
