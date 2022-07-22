@@ -101,6 +101,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .authorizeRequests()
         .antMatchers(HttpMethod.GET, "/report").hasAuthority(Manager.authority)
         .antMatchers(HttpMethod.POST, "/games/platform/*/title/*").hasAuthority(Manager.authority)
+        .antMatchers(HttpMethod.POST, "/platforms/register/*").hasAuthority(Manager.authority)
         .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAnyAuthority(Manager.authority, Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedInEndpoints() = and()
