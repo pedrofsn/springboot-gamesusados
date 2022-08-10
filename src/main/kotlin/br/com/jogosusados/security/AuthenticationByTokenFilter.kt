@@ -14,10 +14,18 @@ class AuthenticationByTokenFilter(private val tokenService: TokenService, privat
     OncePerRequestFilter() {
 
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         val token = recoverToken(request)
-        if (tokenService.validateToken(token)) {
-            login(token)
+        try {
+            if (tokenService.validateToken(token)) {
+                login(token)
+            }
+        } catch (ex: Exception) {
+            request.setAttribute("exception", ex)
         }
         filterChain.doFilter(request, response)
     }
