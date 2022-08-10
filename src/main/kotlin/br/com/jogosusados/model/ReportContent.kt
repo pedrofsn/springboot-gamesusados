@@ -8,7 +8,6 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.ManyToOne
 
-
 @Entity
 data class ReportContent(
     @Id
@@ -23,14 +22,10 @@ data class ReportContent(
     var announcement: GameAnnouncement?
 ) : Metadata() {
 
-    fun isGame() = game != null
-    fun isAnnouncement() = announcement != null
-
     fun toDTO() = PayloadReportContent(
         id = id,
         description = description,
         game = game?.toDTO(),
         announcement = announcement?.toDTO(),
     )
-
 }
