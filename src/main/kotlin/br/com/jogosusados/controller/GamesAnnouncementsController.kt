@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.util.UriComponentsBuilder
 
-
 @RestController
 @RequestMapping("announcements")
 @CrossOrigin(origins = ["*"])
@@ -105,5 +104,12 @@ class GamesAnnouncementsController {
 
             ResponseEntity.ok(ErrorDTO(message = message, id = id))
         } ?: throw GameAnnouncementNotFoundException()
+    }
+
+    @GetMapping("pending")
+    fun getGameAnnouncementsPending(): ResponseEntity<List<GameAnnouncementDTO>> {
+        val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByEnabledFalse()
+        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO(imageUtilities) }
+        return ResponseEntity.ok(response)
     }
 }
