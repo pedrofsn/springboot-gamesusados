@@ -40,14 +40,6 @@ class ImageUtilities {
         return "${filenameWithoutExtension ?: timeInMillis}.${MediaType.IMAGE_PNG.subtype}"
     }
 
-    private fun getTimeStamp(): String {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-        val now = LocalDateTime.now()
-        return formatter.format(now).replace(" ", "_")
-            .replace("/", "-")
-            .replace(":", "-")
-    }
-
     fun createFolder() {
         try {
             if (Files.exists(root).not()) {
@@ -58,7 +50,7 @@ class ImageUtilities {
         }
     }
 
-    fun getFolderPath(folderName: String) = File(root.toFile(), folderName).toPath()
+    fun getFolderPath(folderName: String): Path = File(root.toFile(), folderName).toPath()
 
     fun addExtension(fileName: String): String {
         val extension = MediaType.IMAGE_PNG.subtype
