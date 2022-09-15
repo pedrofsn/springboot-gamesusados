@@ -1,5 +1,6 @@
 package br.com.jogosusados.documentation
 
+/*
 import io.swagger.v3.oas.models.security.SecurityScheme.In
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -46,3 +47,4 @@ class SpringFoxConfig {
         return listOf(SecurityReference("Token Access", authorizationScopes))
     }
 }
+*/

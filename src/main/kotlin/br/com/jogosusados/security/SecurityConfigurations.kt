@@ -73,9 +73,9 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             "/v2/api-docs",
             "/webjars/**",
             "/configuration/**",
-            "/swagger-resources/**",
-            "/swagger-ui/**",
-            "/swagger-ui/index.html**",
+//            "/swagger-resources/**",
+//            "/swagger-ui/**",
+//            "/swagger-ui/index.html**",
             "/webjars/**",
             "/actuator/health"
         )
