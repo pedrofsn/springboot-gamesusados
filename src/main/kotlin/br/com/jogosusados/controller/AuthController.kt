@@ -39,9 +39,11 @@ class AuthController {
         val usertype = user.type.typeName
         val token: String = tokenService.createToken(authentication)
         return ResponseEntity.ok()
-            .header("Access-Control-Allow-Origin", "*")
+                // Removendo cabeçalho repetido (já garantido pelo filtro) => nextjs e postman OK
+                // TODO [pedrofsn] preciso validar se não crashou nada no android
+//            .header("Access-Control-Allow-Origin", "*")
             .headers {
-                it.accessControlAllowOrigin = "*"
+//                it.accessControlAllowOrigin = "*"
                 it.contentType = MediaType.APPLICATION_JSON
             }
             .body(LoggedDTO(token, usertype))
