@@ -13,3 +13,7 @@ INSERT INTO GAME(title, game_platform_id, created_by, created_at) VALUES('Ghost 
 INSERT INTO GAME_ANNOUNCEMENT(price, game_id, owner_id, enabled, created_by, created_at) VALUES(300.00, 1, 1, true, 'user1@gmail.com', {ts '2021-07-07 08:22:52.69'});
 INSERT INTO GAME_ANNOUNCEMENT(price, game_id, owner_id, enabled, created_by, created_at) VALUES(500.00, 2, 1, true, 'user1@gmail.com', {ts '2021-07-07 08:22:52.69'});
 INSERT INTO GAME_ANNOUNCEMENT(price, game_id, owner_id, enabled, created_by, created_at) VALUES(499.00, 2, 2, true, 'user2@gmail.com', {ts '2021-07-07 08:22:52.69'});
+
+INSERT INTO GAME_ANNOUNCEMENT(price, game_id, owner_id, enabled, created_by, created_at) VALUES(123.00, 1, 1, false, 'user1@gmail.com', {ts '2023-01-13 08:22:52.69'});
+
+INSERT INTO REPORT_CONTENT(description, game_id, announcement_id, created_by, created_at) VALUES('Jogo denunciado via SQL', 1, 1, 'user2@gmail.com', {ts '2023-01-01 08:22:52.69'});
