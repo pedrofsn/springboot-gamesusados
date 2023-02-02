@@ -106,9 +106,23 @@ class GamesAnnouncementsController {
         } ?: throw GameAnnouncementNotFoundException()
     }
 
-    @GetMapping("pending")
-    fun getGameAnnouncementsPending(): ResponseEntity<List<GameAnnouncementDTO>> {
+    @GetMapping("disabled")
+    fun getGameAnnouncementsDisabled(): ResponseEntity<List<GameAnnouncementDTO>> {
         val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByEnabledFalse()
+        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO(imageUtilities) }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("enabled")
+    fun getGameAnnouncementsEnabled(): ResponseEntity<List<GameAnnouncementDTO>> {
+        val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findByEnabledTrue()
+        val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO(imageUtilities) }
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("all")
+    fun getGameAnnouncements(): ResponseEntity<List<GameAnnouncementDTO>> {
+        val announcements: List<GameAnnouncement> = gamesAnnouncementsRepository.findAll()
         val response: List<GameAnnouncementDTO> = announcements.map { it.toDTO(imageUtilities) }
         return ResponseEntity.ok(response)
     }
