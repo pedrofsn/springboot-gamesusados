@@ -1,8 +1,7 @@
 package br.com.jogosusados.security
 
-
-import br.com.jogosusados.model.user.Manager
 import br.com.jogosusados.model.user.Admin
+import br.com.jogosusados.model.user.Manager
 import br.com.jogosusados.model.user.Regular
 import br.com.jogosusados.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +34,9 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun encoder() = BCryptPasswordEncoder()
+
+    @Bean
+    fun corsConfig() = CorsConfig()
 
     @Bean
     @Throws(Exception::class)
@@ -84,7 +86,6 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleOpenEndpoints(): ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry {
         return antMatchers(HttpMethod.GET, "/images/*/*").permitAll()
-//            .antMatchers(HttpMethod.POST, "/images/upload/*").permitAll()
             .antMatchers(HttpMethod.GET, "/platforms").permitAll()
             .antMatchers(HttpMethod.GET, "/games").permitAll()
             .antMatchers(HttpMethod.GET, "/games/search/**").permitAll()
@@ -117,7 +118,8 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedAndManagerEndpoints() = and()
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAnyAuthority(Manager.authority, Regular.authority)
-        .antMatchers(HttpMethod.POST, "/upload").hasAnyAuthority(Manager.authority, Regular.authority)
+        .antMatchers(HttpMethod.POST, "/upload/**").hasAnyAuthority(Manager.authority, Regular.authority)
+        .antMatchers(HttpMethod.OPTIONS, "/images/**").hasAnyAuthority(Manager.authority, Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
