@@ -22,7 +22,6 @@ import kotlin.io.path.exists
 
 @RestController
 @RequestMapping("images")
-@CrossOrigin(origins = ["*"])
 class UploadController {
 
     @Autowired
@@ -31,10 +30,11 @@ class UploadController {
     @Autowired
     lateinit var usersRepository: UserRepository
 
-    @PostMapping("/upload/{folderName}")
+    @PostMapping("/upload/{folderName}/{fileName}")
     fun singleFileUpload(
         @AuthenticationPrincipal userDetails: UserDetails,
         @PathVariable("folderName") folderName: String,
+        @PathVariable("fileName") fileName: String?,
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<ResponseImageUploaded> {
         if (file.isEmpty) throw FileEmptyException()
@@ -50,14 +50,24 @@ class UploadController {
             Files.createDirectory(folderPath)
         }
 
-        val fileName = imageUtilities.getFileName(user.id, folderName, file)
-        val pathFile: Path = getFilePath(folderPath, fileName)
+        val fileNameToBeSaved = if(fileName != null) {
+            val extension = IMAGE_PNG.subtype
+            if (fileName.endsWith(extension)) fileName else "$fileName.$extension"
+        } else {
+            imageUtilities.getFileName(user.id, folderName, file)
+        }
+
+        val pathFile: Path = getFilePath(folderPath, fileNameToBeSaved)
 
         Files.copy(file.inputStream, pathFile, StandardCopyOption.REPLACE_EXISTING)
 
         // TODO [pedrofsn] Será que tem como pegar o valor da annotation do controller dinamicamente? Se sim, matar o "images" do path
-        val imageUrl = imageUtilities.createImageURL(fileName, folderName)
-        val response = ResponseImageUploaded(folder = folderName, fileName = fileName, url = imageUrl.toString())
+        val imageUrl = imageUtilities.createImageURL(fileNameToBeSaved, folderName)
+        val response = ResponseImageUploaded(
+            folder = folderName,
+            fileName = fileNameToBeSaved,
+            url = imageUrl.toString()
+        )
         return ResponseEntity.created(imageUrl).body(response)
     }
 
@@ -68,7 +78,7 @@ class UploadController {
         response: HttpServletResponse
     ) {
         val extension = IMAGE_PNG.subtype
-        val name = if (fileName.endsWith(extension)) fileName else fileName + extension
+        val name = if (fileName.endsWith(extension)) fileName else "$fileName.$extension}"
         val stream = FileInputStream(getFile(folderName, name))
         IOUtils.copy(stream, response.outputStream)
     }
