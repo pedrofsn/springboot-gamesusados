@@ -107,16 +107,15 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .antMatchers(HttpMethod.GET, "/announcements/enabled").hasAuthority(Manager.authority)
         .antMatchers(HttpMethod.GET, "/announcements/disabled").hasAuthority(Manager.authority)
 
-
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedInEndpoints() = and()
         .authorizeRequests()
-        .antMatchers(HttpMethod.GET, "/announcements/*").hasAuthority(Regular.authority)
         .antMatchers(HttpMethod.GET, "/games/platform/*").hasAuthority(Regular.authority)
         .antMatchers(HttpMethod.POST, "/announcements/game/*/price/*").hasAuthority(Regular.authority)
         .antMatchers(HttpMethod.POST, "/report").hasAuthority(Regular.authority)
 
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleLoggedAndManagerEndpoints() = and()
         .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/announcements/*").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.POST, "/upload/**").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.OPTIONS, "/images/**").hasAnyAuthority(Manager.authority, Regular.authority)
