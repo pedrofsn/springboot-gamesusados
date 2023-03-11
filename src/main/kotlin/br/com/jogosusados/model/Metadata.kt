@@ -1,5 +1,7 @@
 package br.com.jogosusados.model
 
+import br.com.jogosusados.payload.PayloadMetadata
+import br.com.jogosusados.payload.PayloadReportContent
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -24,4 +26,11 @@ abstract class Metadata {
 
     @LastModifiedDate
     var updateAt: Calendar? = null
+
+    fun getMetadataDTO() = PayloadMetadata(
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedBy = updatedBy,
+        updateAt = updateAt,
+    )
 }

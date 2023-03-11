@@ -4,5 +4,6 @@ data class PayloadReportContent(
     val id: Long,
     val description: String,
     val game: GameDTO?,
-    val announcement: GameAnnouncementDTO?
+    val announcement: GameAnnouncementDTO?,
+    val metadata: PayloadMetadata
 )

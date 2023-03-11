@@ -27,5 +27,6 @@ data class ReportContent(
         description = description,
         game = game?.toDTO(),
         announcement = announcement?.toDTO(),
+        metadata = getMetadataDTO()
     )
 }
