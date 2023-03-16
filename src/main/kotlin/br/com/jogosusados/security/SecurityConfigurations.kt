@@ -64,6 +64,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
             .handleManagerEndpoints()
             .handleLoggedInEndpoints()
             .handleLoggedAndManagerEndpoints()
+            .handleManagerAndAdminEndpoints()
             .handleStaticResources()
 
     }
@@ -119,8 +120,11 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.POST, "/upload/**").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.OPTIONS, "/images/**").hasAnyAuthority(Manager.authority, Regular.authority)
-
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, "/users/register/manager").hasAuthority(Admin.authority)
+
+    private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleManagerAndAdminEndpoints() = and()
+        .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/users/*").hasAnyAuthority(Manager.authority, Admin.authority)
 }

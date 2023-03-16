@@ -1,9 +1,6 @@
 package br.com.jogosusados.controller
 
-import br.com.jogosusados.model.user.UserType
-import br.com.jogosusados.model.user.Manager
-import br.com.jogosusados.model.user.Regular
-import br.com.jogosusados.model.user.toUsernamePasswordAuthenticationToken
+import br.com.jogosusados.model.user.*
 import br.com.jogosusados.payload.LoggedDTO
 import br.com.jogosusados.payload.ProfileDTO
 import br.com.jogosusados.payload.UserPOST
@@ -47,6 +44,18 @@ class UsersController {
         @RequestBody @Valid form: UserPOST,
         request: HttpServletRequest
     ) = form.createUser(Regular)
+
+    @GetMapping
+    fun getUsers(@AuthenticationPrincipal userDetails: UserDetails): List<ProfileDTO> {
+        val user = usersRepository.getUser(userDetails)
+        val users = usersRepository.findByTypeIsNot(user.type).map { it.toProfileDTO() }
+
+        return when {
+            user.isManager() -> users.filterNot { it.type == Admin.typeName }
+            user.isAdmin() -> users
+            else -> emptyList()
+        }
+    }
 
     @PostMapping("/register/manager")
     fun registerUserManager(
