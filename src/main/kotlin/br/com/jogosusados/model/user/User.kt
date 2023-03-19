@@ -43,6 +43,7 @@ data class User(
     )
 
     fun toProfileDTO() = ProfileDTO(
+        id = id,
         name = name,
         phone = phone,
         email = email,
