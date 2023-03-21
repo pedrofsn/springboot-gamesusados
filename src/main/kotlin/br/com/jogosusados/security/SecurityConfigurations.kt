@@ -120,6 +120,7 @@ class SecurityConfigurations : WebSecurityConfigurerAdapter() {
         .antMatchers(HttpMethod.POST, "/announcements/*/toggle/*").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.POST, "/upload/**").hasAnyAuthority(Manager.authority, Regular.authority)
         .antMatchers(HttpMethod.OPTIONS, "/images/**").hasAnyAuthority(Manager.authority, Regular.authority)
+        .antMatchers(HttpMethod.GET, "/users/my-profile").hasAnyAuthority(Manager.authority, Regular.authority)
     private fun ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry.handleAdminEndpoints() = and()
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, "/users/register/manager").hasAuthority(Admin.authority)
