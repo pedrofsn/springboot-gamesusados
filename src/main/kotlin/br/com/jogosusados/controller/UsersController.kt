@@ -82,8 +82,7 @@ class UsersController {
         val user = usersRepository.getUser(userDetails)
         val fileName = imageUtilities.addExtension(user.id.toString())
         val image = imageUtilities.createImageURL(fileName, "my-profile")
-        val imageURL = image.toString()
-        val fileExists = File(imageURL).exists()
-        return user.toProfileDTO().copy(image = if(fileExists) imageURL else null)
+        val imageURL = image?.toString()
+        return user.toProfileDTO().copy(image = imageURL)
     }
 }

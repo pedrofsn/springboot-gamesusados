@@ -36,10 +36,11 @@ data class User(
     fun isManager() = authorities.contains(Manager)
     fun isRegular() = authorities.contains(Regular)
 
-    fun toDTO() = OwnerDTO(
+    fun toDTO(image: String? = null) = OwnerDTO(
         name = name,
         phone = phone,
-        email = email
+        email = email,
+        image = image
     )
 
     fun toProfileDTO() = ProfileDTO(

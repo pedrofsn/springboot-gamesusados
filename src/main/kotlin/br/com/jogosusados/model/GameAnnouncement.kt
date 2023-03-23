@@ -4,6 +4,7 @@ import br.com.jogosusados.model.user.User
 import br.com.jogosusados.payload.AnnouncementDTO
 import br.com.jogosusados.payload.GameAnnouncementDTO
 import br.com.jogosusados.payload.GameDTO
+import br.com.jogosusados.payload.OwnerDTO
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -28,11 +29,11 @@ data class GameAnnouncement(
     var enabled : Boolean = false
 ) : Metadata() {
 
-    fun toDTO(gameDTO: GameDTO) = GameAnnouncementDTO(
+    fun toDTO(gameDTO: GameDTO, ownerDTO: OwnerDTO) = GameAnnouncementDTO(
         id = id,
         price = price,
         game = gameDTO,
-        owner = owner.toDTO(),
+        owner = ownerDTO,
         enabled = enabled
     )
 

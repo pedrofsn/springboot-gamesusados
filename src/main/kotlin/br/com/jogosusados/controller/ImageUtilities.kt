@@ -5,30 +5,38 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.net.URI
 
 @Service
 class ImageUtilities {
 
-    private val root: Path = Paths.get("uploads")
+    private val rootFolder = "uploads"
+    private val root: Path = Paths.get(rootFolder)
 
-    fun createImageURL(fileName: String, vararg folders: String) = ServletUriComponentsBuilder
-        .fromCurrentContextPath()
-        .path("images")
-        .apply {
-            for(folder in folders) {
-                path("/$folder")
+    fun createImageURL(fileName: String, vararg folders: String): URI? {
+        var tempPath: String = rootFolder
+        val imageURI = ServletUriComponentsBuilder
+            .fromCurrentContextPath()
+            .path("images")
+            .apply {
+                for(folder in folders) {
+                    val folderName = "/$folder"
+                    path(folderName)
+                    tempPath += folderName
+                }
+                val fileNameWithSlash = "/$fileName"
+                path(fileNameWithSlash)
+                tempPath += fileNameWithSlash
             }
-            path("/$fileName")
-        }
-        .buildAndExpand(*folders, fileName)
-        .toUri()
+            .buildAndExpand(*folders, fileName)
+            .toUri()
+        return if(File(tempPath).exists()) imageURI else null
+    }
 
     fun getFileName(idUser: Long, file: MultipartFile): String {
         val timeInMillis = Calendar.getInstance().timeInMillis
