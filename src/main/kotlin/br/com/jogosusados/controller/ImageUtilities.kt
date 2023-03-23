@@ -30,10 +30,7 @@ class ImageUtilities {
         .buildAndExpand(*folders, fileName)
         .toUri()
 
-    fun getFileName(idUser: Long, folderName: String, file: MultipartFile): String {
-        if(folderName == "my-profile") {
-            return "$idUser.${MediaType.IMAGE_PNG.subtype}"
-        }
+    fun getFileName(idUser: Long, file: MultipartFile): String {
         val timeInMillis = Calendar.getInstance().timeInMillis
         val filenameWithoutExtension = file.originalFilename?.split(".")?.firstOrNull()
         // TODO Isto permitirá a sobrescrita de arquivos com o mesmo nome do lado do servidor

@@ -51,10 +51,14 @@ class UploadController {
         }
 
         val fileNameToBeSaved = if(fileName != null) {
-            val extension = IMAGE_PNG.subtype
-            if (fileName.endsWith(extension)) fileName else "$fileName.$extension"
+            if(folderName == "my-profile") {
+                "${user.id}.${IMAGE_PNG.subtype}"
+            } else {
+                val extension = IMAGE_PNG.subtype
+                if (fileName.endsWith(extension)) fileName else "$fileName.$extension"
+            }
         } else {
-            imageUtilities.getFileName(user.id, folderName, file)
+            imageUtilities.getFileName(user.id, file)
         }
 
         val pathFile: Path = getFilePath(folderPath, fileNameToBeSaved)
