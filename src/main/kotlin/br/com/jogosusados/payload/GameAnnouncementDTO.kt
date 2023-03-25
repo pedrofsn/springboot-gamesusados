@@ -6,5 +6,6 @@ data class GameAnnouncementDTO(
     val owner: OwnerDTO,
     val price: Double,
     val enabled: Boolean,
-    val priceMasked: String
+    val priceMasked: String,
+    val metadata: PayloadMetadata
 )

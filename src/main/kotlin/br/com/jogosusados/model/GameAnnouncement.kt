@@ -37,7 +37,8 @@ data class GameAnnouncement(
         game = gameDTO,
         owner = ownerDTO,
         enabled = enabled,
-        priceMasked = getPriceMasked(price)
+        priceMasked = getPriceMasked(price),
+        metadata = getMetadataDTO()
     )
 
     fun toDTO() = GameAnnouncementDTO(
@@ -46,7 +47,8 @@ data class GameAnnouncement(
         game = game.toDTO(),
         owner = owner.toDTO(),
         enabled = enabled,
-        priceMasked = getPriceMasked(price)
+        priceMasked = getPriceMasked(price),
+        metadata = getMetadataDTO()
     )
 
     fun toAnnouncementDTO() = AnnouncementDTO(

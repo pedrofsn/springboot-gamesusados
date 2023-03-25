@@ -18,6 +18,7 @@ data class Game(
         id = id,
         title = title,
         platform = gamePlatform.name,
-        image = image
+        image = image,
+        metadata = getMetadataDTO()
     )
 }
