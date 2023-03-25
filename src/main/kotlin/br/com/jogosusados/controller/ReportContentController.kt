@@ -40,7 +40,12 @@ class ReportContentController {
 
     @GetMapping
     fun getList(
-        @PageableDefault(sort = ["description"], direction = Direction.DESC, page = 0, size = 10) pageable: Pageable
+        @PageableDefault(
+            sort = ["createdAt"],
+            direction = Direction.DESC,
+            page = 0,
+            size = 10
+        ) pageable: Pageable
     ): Page<PayloadReportContent> = reportContentRepository.findAll(pageable).map { it.toDTO() }
 
     @PostMapping
