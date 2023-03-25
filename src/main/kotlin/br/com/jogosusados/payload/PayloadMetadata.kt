@@ -12,6 +12,7 @@ data class PayloadMetadata(
 )
 
 fun parse(calendar: Calendar): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm")
+    val localePtBr = Locale("pt", "BR")
+    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", localePtBr)
     return formatter.format(calendar.time)
 }
