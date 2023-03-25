@@ -9,12 +9,12 @@ data class UserPOST(
     val email: String,
     val password: String
 ) {
-    fun toEntity(type: UserType, passwordEncrypted : String) = User(
+    fun toEntity(type: UserType, passwordEncrypted: String, createdBy: String) = User(
         id = 0,
         name = name,
         phone = phone,
         email = email,
         password = passwordEncrypted,
         type = type
-    )
+    ).apply { this.createdBy = createdBy }
 }

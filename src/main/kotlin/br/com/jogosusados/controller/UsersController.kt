@@ -6,21 +6,15 @@ import br.com.jogosusados.payload.ProfileDTO
 import br.com.jogosusados.payload.UserPOST
 import br.com.jogosusados.repository.UserRepository
 import br.com.jogosusados.security.TokenService
-import javax.servlet.http.HttpServletRequest
-import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.CrossOrigin
-import java.io.File
+import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("users")
@@ -43,7 +37,10 @@ class UsersController {
     fun registerUserRegular(
         @RequestBody @Valid form: UserPOST,
         request: HttpServletRequest
-    ) = form.createUser(Regular)
+    ): ResponseEntity<LoggedDTO> {
+        val selfCreated = form.email
+        return registerUser(user = form.createUserWithPassword(type = Regular, createdBy = selfCreated))
+    }
 
     @GetMapping
     fun getUsers(@AuthenticationPrincipal userDetails: UserDetails): List<ProfileDTO> {
@@ -65,16 +62,19 @@ class UsersController {
     ): ResponseEntity<LoggedDTO> {
         return usersRepository.getUser(userDetails)
             .takeIf { it.isAdmin() }
-            ?.let { form.createUser(Manager) }
+            ?.let { registerUser(user = form.createUserWithPassword(type = Manager, createdBy = it.email)) }
             ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }
 
-    private fun UserPOST.createUser(type: UserType): ResponseEntity<LoggedDTO> {
+    private fun UserPOST.createUserWithPassword(type: UserType, createdBy: String): User {
         val passwordEncrypted = passwordEncoder.encode(password)
-        val entity = toEntity(type, passwordEncrypted)
-        return usersRepository.save(entity).toUsernamePasswordAuthenticationToken()
+        return toEntity(type, passwordEncrypted, createdBy)
+    }
+
+    private fun registerUser(user: User): ResponseEntity<LoggedDTO> {
+        return usersRepository.save(user).toUsernamePasswordAuthenticationToken()
             .let { tokenService.createToken(it) }
-            .let { ResponseEntity.ok(LoggedDTO(it, type.typeName)) }
+            .let { ResponseEntity.ok(LoggedDTO(it, user.type.typeName)) }
     }
 
     @GetMapping("my-profile")

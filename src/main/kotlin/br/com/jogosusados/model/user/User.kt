@@ -1,5 +1,6 @@
 package br.com.jogosusados.model.user
 
+import br.com.jogosusados.model.Metadata
 import br.com.jogosusados.payload.OwnerDTO
 import br.com.jogosusados.payload.ProfileDTO
 import javax.persistence.Convert
@@ -20,7 +21,7 @@ data class User(
     private var password: String,
     @Convert(converter = UserTypeConverter::class)
     val type: UserType
-) : UserDetails {
+) : Metadata(), UserDetails {
 
     override fun getAuthorities() = listOf(type)
     override fun getPassword(): String = password
@@ -48,7 +49,8 @@ data class User(
         name = name,
         phone = phone,
         email = email,
-        type = type.typeName
+        type = type.typeName,
+        metadata = getMetadataDTO()
     )
 }
 

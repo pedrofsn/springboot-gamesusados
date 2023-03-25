@@ -6,5 +6,6 @@ data class ProfileDTO(
     val phone: String,
     val email: String,
     val type: String,
-    val image: String? = null
+    val image: String? = null,
+    val metadata: PayloadMetadata
 )
