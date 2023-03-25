@@ -5,5 +5,6 @@ data class GameAnnouncementDTO(
     val game: GameDTO,
     val owner: OwnerDTO,
     val price: Double,
-    val enabled: Boolean
+    val enabled: Boolean,
+    val priceMasked: String
 )
