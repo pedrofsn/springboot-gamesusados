@@ -1,37 +1,35 @@
-# Descrição do projeto
-Projeto backend de um sistema de anúncios de jogos. Neste sistema os usuários regulares podem cadastrar anúncios nos jogos que foram previamente cadastrados por gerentes (somente).
+## Descrição do projeto
+Projeto backend de um sistema de anúncios de jogos. Neste sistema os usuários regulares podem cadastrar anúncios de jogos, que foram previamente cadastrados por gerentes (somente).
 
-# Funcionalidades disponíveis na API
+### Regras de negócio e Perfis de Usuário
 
-### Admin
-- Cadastrar usuário com perfil de gerente
+#### Sem perfil 
+- Cadastrar usuário com perfil regular
+- Visualizar plataformas
+- Visualizar jogos
+- Pesquisar jogos
+- Realizar login
 
-### Gerente
+#### Regular
+- Visualizar anúncios
+- Visualizar jogos por plataforma
+- Cadastrar anúncios
+- Visualizar anúncios
+- Denunciar anúncios
+- Denunciar jogos
+- Desativar um anúncio próprio
+
+#### Gerente
 - Cadastrar plataformas
 - Cadastrar jogos
-- Ativar/desativar anúncios
+- Publicar/suspender anúncios
 - Visualizar lista de denúncias
+- Visualizar lista de usuários
 
-### Regular
-- Listar anúncios
-- Listar jogos por plataforma
-- Cadastrar anúncio de um jogo
-- Desativar um anúncio próprio
-- Denunciar um jogo
-- Denunciar um anúncio
-
-### Sem perfil / Abertos
-- Cadastro de usuário com perfil regular
-- Upload de imagem
-- Visualizar imagens
-- Listar plataformas
-- Listar jogos
-- Pesquisar jogos
-- Logar usuário
-
-
-## Melhorias
-- [ ] Implementar o cadastro de plataformas no perfil do gerente
+#### Admin
+- Cadastrar usuário com perfil de gerente
 
 ## Pontos de atenção
-O arquivo da imagem de um jogo deve coincidir com o id do jogo em questão, além de estar no único formato esperado que é PNG. Em outras palavras se o jogo de id 1 já tem uma imagem cadastrada, qualquer um que fizer uma requisição de upload de imagem de um novo arquivo com o mesmo nome (1.png) irá sobrescrever a imagem original do jogo de id 1. Não está previsto uma evolução ou melhoria neste sentido.
+- Não há um tratamento rigoroso para o salvamento de arquivos (de imagem). Qualquer upload com o mesmo nome/id irá sobrescerver a imagem existente.
+- Não há tratamento ou validação sobre as proporções/redimensionamento de imagens;
+- É esperado que as imagens estejam no formato PNG;
